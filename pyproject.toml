@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "black-jack"
+version = "0.1.0"
+description = ""
+authors = ["mihey <daniil53891@yandex.com>"]
+readme = "README.md"
+packages = [{include = "black_jack"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+mypy = "^1.0.1"
+flake8 = "^6.0.0"
+flake8-print = "^5.0.0"
+flake8-pyproject = "^1.2.2"
+black = "^23.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
