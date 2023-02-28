@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import (
 )
 
 
-def create_session_factory(url: str) -> Callable:
+def create_session_factory(url: str) -> Callable[[], AsyncSession]:
     engine = create_async_engine(url, echo=True)
 
     async_session = async_sessionmaker(

@@ -45,7 +45,7 @@ def do_run_migrations(connection: Connection) -> None:
 async def run_migrations_online() -> None:
     configuration = config.get_section(config.config_ini_section)
     if configuration is not None:
-        configuration["sqlalchemy.url"] = postgres_settings.dsn()
+        configuration["sqlalchemy.url"] = postgres_settings.url
     else:
         raise ValueError("Configuration is None")
 

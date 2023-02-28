@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 
 @dataclass
 class Settings:
-    postgtess: "PostgresSettings" = field(init=False)
+    postgres: "PostgresSettings" = field(init=False)
 
     def __post_init__(self):
         self.postgtess = PostgresSettings()
