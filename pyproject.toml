@@ -6,6 +6,27 @@ authors = ["mihey <daniil53891@yandex.com>"]
 readme = "README.md"
 packages = [{include = "black_jack"}]
 
+[tool.black]
+line-length = 80
+target-version = ['py310']
+exclude = '''
+/(
+  | \.git
+  | \.mypy_cache
+  | \.venv
+  | alembic
+  | env
+  | venv
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+combine_as_imports = true
+line_length = 80
+skip_glob = ["*/*/alembic"]
+
 [tool.poetry.dependencies]
 python = "^3.10"
 mypy = "^1.0.1"
@@ -14,7 +35,9 @@ flake8-print = "^5.0.0"
 flake8-pyproject = "^1.2.2"
 black = "^23.1.0"
 pydantic = "^1.10.5"
-aiohttp = "^3.8.4"
+sqlalchemy = "^2.0.4"
+alembic = "^1.9.4"
+isort = "^5.12.0"
 
 
 [build-system]
