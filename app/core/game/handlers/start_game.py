@@ -1,13 +1,12 @@
 from app.core.common.handler import Handler
 from app.core.game.execprions import UserNotFoundException
-from app.core.chat.exceptions import ChatNotFoundException
 from app.core.common.protocols import Commiter
-from app.core.game.protocols import GameGateway, GameStateGateway, PlayerGateway
+from app.core.game.protocols import (
+    GameGateway, GameStateGateway, PlayerGateway
+)
 from app.core.user.protocols import UserGateway
 from app.core.chat.protocols import ChatGateway
 from app.core.game import dto as game_dto
-from app.core.chat import dto as chat_dto
-from app.core.chat import entities as chat_entities
 from app.core.game import entities as game_entities
 from app.core.user import entities as user_entities
 
