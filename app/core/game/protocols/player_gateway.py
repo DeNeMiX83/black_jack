@@ -1,7 +1,7 @@
 from typing import Protocol
-from app.core.player.entities import Player
+from app.core.player import entities
 
 
 class PlayerGateway(Protocol):
-    async def create(self, player: Player) -> Player:
+    async def create(self, player: entities.Player) -> None:
         raise NotImplementedError

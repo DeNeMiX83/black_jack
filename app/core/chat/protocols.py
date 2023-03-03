@@ -6,5 +6,5 @@ class ChatGateway(Protocol):
     async def get_by_tg_id(self, tg_id: int) -> Chat:
         raise NotImplementedError
 
-    async def create(self, chat: Chat) -> Chat:
+    async def create(self, chat: Chat) -> None:
         raise NotImplementedError
