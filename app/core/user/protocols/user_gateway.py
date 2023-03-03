@@ -6,6 +6,9 @@ class UserGateway(Protocol):
     async def get(self, user_id: int) -> User:
         raise NotImplementedError
 
+    async def get_by_tg_id(self, tg_id: int) -> User:
+        raise NotImplementedError
+
     async def create(self, user: User) -> User:
         raise NotImplementedError
 
