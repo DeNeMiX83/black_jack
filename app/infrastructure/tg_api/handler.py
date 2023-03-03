@@ -1,10 +1,10 @@
-from typing import Protocol
+from typing import Protocol, Callable
 from app.infrastructure.tg_api.dto import Update
-from app.infrastructure.tg_api.filter import Filter
+from app.infrastructure.tg_api.filters import Filter
 
 
 class Handler(Protocol):
-    def __init__(self, handler_func):
+    def __init__(self, handler_func: Callable):
         raise NotImplementedError
 
     async def handle(self, update: Update) -> None:
@@ -17,17 +17,17 @@ class Handler(Protocol):
         raise NotImplementedError
 
 
-class HandlerBase(Handler):
-    def __init__(self, handler_func):
+class HandlerImpl(Handler):
+    def __init__(self, handler_func: Callable):
         self._handler_func = handler_func
-        self._filters = []
+        self._filters: list[Filter] = []
 
     async def handle(self, update: Update) -> None:
         await self._handler_func(update)
 
     async def filter(self, update: Update) -> bool:
-        for filter in self._filters:
-            if not await filter.filter(update):
+        for handler_filter in self._filters:
+            if not await handler_filter.check(update):
                 return False
         return True
 

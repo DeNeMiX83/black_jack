@@ -3,7 +3,7 @@ from app.infrastructure.tg_api.handler import Handler
 from app.infrastructure.tg_api.filter import Filter
 
 
-class UpdateHandler:
+class HandlerUpdate:
     def __init__(self):
         self._handlers: list[Handler] = []
 
