@@ -17,3 +17,4 @@ class Player(Entity):
     user: user_entity.User
     status: PlayerStatus
     score: int = field(init=False, default=0)
+    bet: int = field(default=0)

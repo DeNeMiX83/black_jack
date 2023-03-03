@@ -6,4 +6,3 @@ from app.core.chat import entities as chat_entities
 @dataclass
 class Game(Entity):
     chat: chat_entities.Chat
-    bet: int = field(default=0)
