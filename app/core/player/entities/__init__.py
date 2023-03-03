@@ -1,2 +1,2 @@
-from .player import Player # noqa
+from .player import Player, PlayerStatus as player_status # noqa
 from .cards import PlayerCards # noqa
