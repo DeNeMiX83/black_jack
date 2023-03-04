@@ -1,24 +1,11 @@
-from typing import Protocol, Callable
+from typing import Callable
 from app.infrastructure.tg_api.dto import Update
 from app.infrastructure.tg_api.filters import Filter
+from app.infrastructure.tg_api.bot import TgBot
 
 
-class Handler(Protocol):
-    def __init__(self, handler_func: Callable):
-        raise NotImplementedError
-
-    async def handle(self, update: Update) -> None:
-        raise NotImplementedError
-
-    async def filter(self, update: Update) -> bool:
-        raise NotImplementedError
-
-    def add_filters(self, filters: list[Filter]) -> None:
-        raise NotImplementedError
-
-
-class HandlerImpl(Handler):
-    def __init__(self, handler_func: Callable):
+class Handler():
+    def __init__(self, handler_func: Callable, bot: TgBot):
         self._handler_func = handler_func
         self._filters: list[Filter] = []
 

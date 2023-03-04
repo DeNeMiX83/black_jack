@@ -1,6 +1,5 @@
 from typing import Optional
 from app.common.dto import BaseDto
-from app.infrastructure.tg_api.bot import TgBot
 
 
 class User(BaseDto):
@@ -44,5 +43,3 @@ class Update(BaseDto):
     poll_answer: Optional[dict] = None
     my_chat_member: Optional[dict] = None
     chat_member: Optional[dict] = None
-
-    bot: TgBot
