@@ -1,3 +1,4 @@
+from typing import Any
 import inspect
 
 
@@ -5,10 +6,10 @@ class Container:
     def __init__(self):
         self.dependencies = {}
 
-    def register(self, key: type, dependency):
+    def register(self, key: type, dependency: Any):
         self.dependencies[key] = dependency
 
-    def resolve(self, key):
+    def resolve(self, key: type):
         dependency = self.dependencies.get(key)
 
         if dependency is None:
@@ -17,6 +18,9 @@ class Container:
         if isinstance(dependency, type):
             dependencies = self._get_dependencies_for_class(dependency)
             return dependency(*dependencies)
+
+        if isinstance(dependency, callable):
+            return dependency()
 
         return dependency
 
