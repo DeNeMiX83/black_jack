@@ -32,20 +32,3 @@ def error_json_response(
             "data": data,
         },
     )
-
-
-def auth_required(func):
-    async def wrapper(self, *args, **kwargs):
-        session = await get_session(self.request)
-
-        print(session, 34242134123412341234)
-        if session.get("admin") is None:
-            return error_json_response(
-                http_status=401,
-                status="unauthorized",
-            )
-
-        self.session = session
-        return await func(self, *args, **kwargs)
-
-    return wrapper
