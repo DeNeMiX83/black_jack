@@ -4,9 +4,12 @@ from dataclasses import dataclass, field
 
 @dataclass
 class Settings:
+    secret_key: str = field(init=False)
+    password_algorithm = field(init=False)
     postgres: "PostgresSettings" = field(init=False)
 
     def __post_init__(self):
+        self.password_algorithm = os.getenv("PASSWORD_ALGORITHM")
         self.postgtess = PostgresSettings()
 
 

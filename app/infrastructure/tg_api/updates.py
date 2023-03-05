@@ -22,4 +22,3 @@ class Updates:
                 asyncio.create_task(self._handler.handle_updates(updates))
             except Exception:
                 await asyncio.sleep(5)
-    
