@@ -7,7 +7,6 @@ from app.core.player import players as players_entities
 
 
 class States(Enum):
-    START = 'start'
     BET = 'bet'
     MOTION = 'motion'
     STOP = 'stop'
@@ -16,5 +15,5 @@ class States(Enum):
 @dataclass
 class GameState(Entity):
     game: game_entities.Game
-    state: States = field(default=States.START)
+    state: States = field(default=States.BET)
     current_player: Optional[players_entities.Player] = field(default=None)
