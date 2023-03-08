@@ -1,5 +1,5 @@
 from app.core.common.handler import Handler
-from app.core.game.execprions import UserNotFoundException
+from app.core.game.exceptions import UserNotFoundException
 from app.core.common.protocols import Commiter
 from app.core.game.protocols import (
     GameGateway, GameStateGateway, PlayerGateway

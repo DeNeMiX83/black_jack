@@ -56,7 +56,4 @@ class Container:
         for parameter in inspect.signature(func).parameters.values():
             dependency = await self.resolve(parameter.annotation)
             dependencies.append(dependency)
-        # print(func)
-        # print(dependencies)
-        # print()
         return dependencies

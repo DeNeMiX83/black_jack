@@ -1,3 +1,4 @@
+from app.core.common.exceptions import GatewayException
 from app.core.common.handler import Handler
 from app.core.common.protocols import Commiter
 from app.core.chat.protocols import ChatGateway
@@ -19,7 +20,11 @@ class CreateChatHandler(Handler):
             tg_id=chat.tg_id,
             name=chat.name,
         )
-        await self._chat_gateway.create(chat_entity)
-        print('done add')
+
+        try:
+            await self._chat_gateway.create(chat_entity)
+        except GatewayException as e:
+            print(e, '/////////////////////////////////////////////')
+            raise ValueError(f'Item {chat} already exists')
 
         await self._commiter.commit()

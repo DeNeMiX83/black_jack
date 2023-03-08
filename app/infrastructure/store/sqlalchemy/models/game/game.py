@@ -1,5 +1,5 @@
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import Column, ForeignKey
+from sqlalchemy import Column, ForeignKey, Boolean, Index
 from sqlalchemy.orm import relationship
 import uuid
 
@@ -15,7 +15,14 @@ class Game(Base):
     id = Column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    chat_id = Column('chat_id', UUID(as_uuid=True), ForeignKey('chat.id'))
+    chat_id = Column(
+        UUID(as_uuid=True), ForeignKey('chat.id'), nullable=False
+    )
+    is_over = Column(Boolean, default=False)
+
+    __table_args__ = (
+        Index('idx_game_chat_id_is_over', chat_id, is_over, unique=True),
+    )
 
 
 def game_mapping(mapper_registry):

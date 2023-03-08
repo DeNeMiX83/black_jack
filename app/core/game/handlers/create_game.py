@@ -1,6 +1,10 @@
 from typing import Optional
+from app.core.common.exceptions import GatewayException
 from app.core.common.handler import Handler
 from app.core.common.protocols import Commiter
+from app.core.game.exceptions import (
+    ChatNotFoundException, GameAlreadyExistsException
+)
 from app.core.game.protocols import (
     GameGateway, GameStateGateway
 )
@@ -31,10 +35,15 @@ class CreateGameHandler(Handler):
 
     async def _create_game(self, game: game_dto.GameCreate) -> None:
         chat = await self._chat_gateway.get_by_tg_id(game.chat.tg_id)
+        if chat is None:
+            raise ChatNotFoundException('Chat not found')
 
         self._game = game_entities.Game(chat=chat)
 
-        await self._game_gateway.create(self._game)
+        try:
+            await self._game_gateway.create(self._game)
+        except GatewayException as e:
+            raise GameAlreadyExistsException(e)
 
     async def _create_game_state(self) -> None:
         game_state = game_entities.GameState(

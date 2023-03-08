@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 3224d502a580
+Revision ID: 5e15e7601aa7
 Revises: 
-Create Date: 2023-03-08 11:11:18.477242
+Create Date: 2023-03-08 15:16:43.015789
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3224d502a580'
+revision = '5e15e7601aa7'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,7 +36,7 @@ def upgrade() -> None:
     )
     op.create_table('game',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('chat_id', sa.UUID(), nullable=True),
+    sa.Column('chat_id', sa.UUID(), nullable=False),
     sa.ForeignKeyConstraint(['chat_id'], ['chat.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -54,8 +54,8 @@ def upgrade() -> None:
     op.create_table('game_state',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('game_id', sa.UUID(), nullable=False),
-    sa.Column('state', sa.Enum('BET', 'MOTION', 'STOP', name='states'), nullable=False),
-    sa.Column('current_player_id', sa.UUID(), nullable=False),
+    sa.Column('state', sa.Enum('START', 'BET', 'MOTION', 'STOP', name='states'), nullable=False),
+    sa.Column('current_player_id', sa.UUID(), nullable=True),
     sa.ForeignKeyConstraint(['current_player_id'], ['player.id'], ),
     sa.ForeignKeyConstraint(['game_id'], ['game.id'], ),
     sa.PrimaryKeyConstraint('id')

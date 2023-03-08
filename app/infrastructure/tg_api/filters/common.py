@@ -22,8 +22,7 @@ class CommandFilter(Filter):
                 offset = entities[-1].offset
                 length = entities[-1].length
                 if (
-                    update.message.text[offset:offset + length + 1]  # type: ignore # noqa
-                    == self._command
+                    self._command in update.message.text[offset:offset + length + 1]  # type: ignore # noqa
                 ):
                     return True
         return False

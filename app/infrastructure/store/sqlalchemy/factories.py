@@ -17,4 +17,4 @@ async def create_session_factory(settings: Settings):
     async with async_session() as session:
         yield session
 
-    engine.dispose()
+    await engine.dispose()

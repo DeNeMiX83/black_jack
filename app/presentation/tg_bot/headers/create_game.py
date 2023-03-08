@@ -1,9 +1,12 @@
 import json
 from app.common.logger import logger
-from app.presentation.tg_bot.loader import tg_bot
 from app.infrastructure.tg_api import TgBot
 from app.infrastructure.tg_api.dto import Update
 from app.infrastructure.tg_api.filters import CommandFilter
+from app.presentation.tg_bot.loader import tg_bot
+from app.core.game.exceptions import (
+    ChatNotFoundException, GameAlreadyExistsException
+)
 from app.core.chat import dto as chat_dto
 from app.core.game import dto as game_dto
 from app.core.game.handlers import CreateGameHandler
@@ -19,7 +22,21 @@ async def create_game(update: Update, handler: CreateGameHandler, bot: TgBot):
             name=update.message.chat.title
         )
     )
-    await handler.execute(game_create)
+
+    try:
+        await handler.execute(game_create)
+    except ChatNotFoundException:
+        await bot.send_message(
+            chat_id=update.message.chat.id,
+            text='Чат не найден, нажмите /start'
+        )
+        return
+    except GameAlreadyExistsException:
+        await bot.send_message(
+            chat_id=update.message.chat.id,
+            text='Игра уже существует'
+        )
+        return
 
     inline_keyboard = {
         "inline_keyboard": [

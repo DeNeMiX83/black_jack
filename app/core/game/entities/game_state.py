@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 
 class States(Enum):
+    START = 'start'
     BET = 'bet'
     MOTION = 'motion'
     STOP = 'stop'
@@ -17,5 +18,5 @@ class States(Enum):
 @dataclass
 class GameState(Entity):
     game: game_entities.Game
-    state: States = field(default=States.BET)
+    state: States = field(default=States.START)
     current_player: Optional['Player'] = field(default=None)

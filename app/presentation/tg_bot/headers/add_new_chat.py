@@ -15,10 +15,17 @@ async def add_new_chat(update: Update, handler: CreateChatHandler, bot: TgBot):
         tg_id=update.message.chat.id,
         name=update.message.chat.title
     )
-    print(chat)
-    await handler.execute(chat)
-    print('done')
+
+    try:
+        await handler.execute(chat)
+    except ValueError:
+        await bot.send_message(
+            chat_id=chat.tg_id,
+            text='Чат уже добавлен.\nВы можете создать игру в чате.\nДля этого нажмите /create_game'
+        )
+        return
+
     await bot.send_message(
-        update.message.chat.id,
-        'Приветствую! Вы можете создать игру в чате.\nДля этого нажмите /start_game'
+        chat_id=update.message.chat.id,
+        text='Приветствую! Вы можете создать игру в чате.\nДля этого нажмите /create_game'
     )
