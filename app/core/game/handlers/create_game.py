@@ -13,7 +13,7 @@ from app.core.game import dto as game_dto
 from app.core.game import entities as game_entities
 
 
-class CreateGameHandler(Handler):
+class CreateGameAndGetHandler(Handler):
     def __init__(
         self,
         game_gateway: GameGateway,
@@ -25,7 +25,7 @@ class CreateGameHandler(Handler):
         self._game_state_gateway = game_state_gateway
         self._chat_gateway = chat_gateway
         self._commiter = commiter
-        self._game = Optional[game_entities.Game]
+        self._game: Optional[game_entities.Game] = None
 
     async def execute(self, game: game_dto.GameCreate) -> None:
         await self._create_game(game)

@@ -23,8 +23,7 @@ class CreateChatHandler(Handler):
 
         try:
             await self._chat_gateway.create(chat_entity)
-        except GatewayException as e:
-            print(e, '/////////////////////////////////////////////')
+        except GatewayException:
             raise ValueError(f'Item {chat} already exists')
 
         await self._commiter.commit()

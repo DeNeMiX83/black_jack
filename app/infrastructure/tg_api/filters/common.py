@@ -7,6 +7,11 @@ class MessageFilter(Filter):
         return update.message is not None and update.message.text is not None
 
 
+class CallbackQueryFilter(Filter):
+    def check(self, update: Update):
+        return update.callback_query is not None
+
+
 class GroupFilter(Filter):
     def check(self, update: Update) -> bool:
         return update.message.chat.type == "group"  # type: ignore

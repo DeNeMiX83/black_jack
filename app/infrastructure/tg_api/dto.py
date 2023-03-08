@@ -37,6 +37,13 @@ class Message(BaseDto):
     new_chat_member: Optional[User] = None
 
 
+class CallbackQuery(BaseDto):
+    id: int
+    from_user: Optional[User] = Field(alias="from")
+    message: Optional[Message] = None
+    data: Optional[str] = None
+
+
 class Update(BaseDto):
     update_id: int
     message: Optional[Message] = None
@@ -45,7 +52,7 @@ class Update(BaseDto):
     edited_channel_post: Optional[Message] = None
     inline_query: Optional[dict] = None
     chosen_inline_result: Optional[dict] = None
-    callback_query: Optional[dict] = None
+    callback_query: Optional[CallbackQuery] = None
     shipping_query: Optional[dict] = None
     pre_checkout_query: Optional[dict] = None
     poll: Optional[dict] = None

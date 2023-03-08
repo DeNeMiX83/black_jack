@@ -4,22 +4,38 @@ from app.infrastructure.store.sqlalchemy.gateway import (
     GameGatewayImpl,
     GameStateGatewayImpl,
     ChatGatewayImpl,
+    PlayerGatewayImpl,
+    UserGatewayImpl,
     CommiterImp,
 )
-from app.core.game.handlers import CreateGameHandler
+from app.core.game.handlers import CreateGameAndGetHandler, AddPlayerHandler
 
 
 def build(container: Container) -> None:
-    container.register(CreateGameHandler, game_create)
+    container.register(CreateGameAndGetHandler, game_create)
+    container.register(AddPlayerHandler, add_player)
 
 
 def game_create(
     session: AsyncSession,
-) -> CreateGameHandler:
+) -> CreateGameAndGetHandler:
     game_gateway = GameGatewayImpl(session)
     game_state_gateway = GameStateGatewayImpl(session)
     chat_gateway = ChatGatewayImpl(session)
     commiter = CommiterImp(session)
-    return CreateGameHandler(
+    return CreateGameAndGetHandler(
         game_gateway, game_state_gateway, chat_gateway, commiter
+    )
+
+
+def add_player(
+    session: AsyncSession,
+) -> AddPlayerHandler:
+    game_gateway = GameGatewayImpl(session)
+    player_gateway = PlayerGatewayImpl(session)
+    user_gateway = UserGatewayImpl(session)
+    chat_gateway = ChatGatewayImpl(session)
+    commiter = CommiterImp(session)
+    return AddPlayerHandler(
+        game_gateway, player_gateway, user_gateway, chat_gateway, commiter
     )

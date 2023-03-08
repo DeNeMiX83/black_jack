@@ -3,9 +3,10 @@ from aiohttp import ClientSession
 from app.common.logger import logger
 from app.di.container import Container
 from app.settings import Settings
+from app.infrastructure.tg_api.dto import Message
 from app.infrastructure.tg_api.handler import Handler
 from app.infrastructure.tg_api.filters import (
-    Filter, MessageFilter, GroupFilter, CommandFilter
+    Filter, MessageFilter, CallbackQueryFilter
 )
 
 
@@ -27,7 +28,7 @@ class TgBot():
     async def get_handlers(self) -> list[Handler]:
         return self._handlers
 
-    async def send_message(self, **kwargs) -> Optional[dict]:
+    async def send_message(self, **kwargs) -> Message:
         url = f"{self._url}/sendMessage"
         async with self._session.get(
             url,
@@ -37,9 +38,24 @@ class TgBot():
         ) as response:
             response.raise_for_status()
             data = await response.json()
-            return data
+            message = Message(**data['result'])
+            return message
 
-    def message_handler(self, *filters: list[Filter]):
+    async def edit_message_text(self, parse_mode='HTML', **kwargs) -> Message:
+        url = f"{self._url}/editMessageText"
+        async with self._session.get(
+            url,
+            params={
+                **kwargs,
+                'parse_mode': parse_mode
+            }
+        ) as response:
+            response.raise_for_status()
+            data = await response.json()
+            # message = Message(**data['result'])
+            # return message
+    
+    def message_handler(self, *filters: Filter):
         def decorator(handler_func):
             handler = Handler(handler_func, self._di)
             handler.add_filters([MessageFilter()])
@@ -48,7 +64,16 @@ class TgBot():
             return handler_func
         return decorator
 
-    def common_handler(self, *filters: list[Filter]):
+    def callback_query_handler(self, *filters: Filter):
+        def decorator(handler_func):
+            handler = Handler(handler_func, self._di)
+            handler.add_filters([CallbackQueryFilter()])
+            handler.add_filters(filters)
+            self._handlers.append(handler)
+            return handler_func
+        return decorator
+
+    def common_handler(self, *filters: Filter):
         def decorator(handler_func):
             handler = Handler(handler_func, self._di)
             handler.add_filters(filters)
