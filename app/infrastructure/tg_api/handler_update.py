@@ -1,8 +1,10 @@
+from typing import TYPE_CHECKING
+from app.common.logger import logger
 from app.infrastructure.tg_api.dto import Update
 from app.infrastructure.tg_api.bot import TgBot
 
 
-class HandlerUpdate:
+class HandlerUpdates:
     def __init__(self, bot: TgBot):
         self._bot = bot
 

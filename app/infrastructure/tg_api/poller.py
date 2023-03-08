@@ -1,6 +1,8 @@
 from typing import Optional
 from aiohttp import TCPConnector
 from aiohttp.client import ClientSession
+from app.common.logger import logger
+from app.infrastructure.tg_api.dto import Update
 
 
 class Poller:
@@ -18,7 +20,7 @@ class Poller:
 
     async def get_updates(self):
         async with self.session.get(
-            self.server_url + 'getUpdates',
+            self.server_url + '/getUpdates',
             data={
                 'timeout': 30,
                 'offset': self._offset,
@@ -26,6 +28,6 @@ class Poller:
         ) as resp:
             resp.raise_for_status()
             data = await resp.json()
-            updates = data['result']
-            self._offset = updates[-1]['update_id'] + 1
+            updates = [Update(**update) for update in data['result']]
+            self._offset = updates[-1].update_id + 1
             return updates

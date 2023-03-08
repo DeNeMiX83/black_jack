@@ -6,6 +6,22 @@ authors = ["mihey <daniil53891@yandex.com>"]
 readme = "README.md"
 packages = [{include = "black_jack"}]
 
+[tool.poetry.dependencies]
+python = "^3.10"
+mypy = "^1.0.1"
+flake8 = "^6.0.0"
+flake8-print = "^5.0.0"
+flake8-pyproject = "^1.2.2"
+black = "^23.1.0"
+pydantic = "^1.10.5"
+sqlalchemy = "^2.0.4"
+alembic = "^1.9.4"
+isort = "^5.12.0"
+aiohttp = "^3.8.4"
+aiohttp-session = "^2.12.0"
+passlib = "^1.7.4"
+asyncpg = "^0.27.0"
+
 [tool.black]
 line-length = 80
 target-version = ['py310']
@@ -26,22 +42,6 @@ multi_line_output = 3
 combine_as_imports = true
 line_length = 80
 skip_glob = ["*/*/alembic"]
-
-[tool.poetry.dependencies]
-python = "^3.10"
-mypy = "^1.0.1"
-flake8 = "^6.0.0"
-flake8-print = "^5.0.0"
-flake8-pyproject = "^1.2.2"
-black = "^23.1.0"
-pydantic = "^1.10.5"
-sqlalchemy = "^2.0.4"
-alembic = "^1.9.4"
-isort = "^5.12.0"
-aiohttp = "^3.8.4"
-aiohttp-session = "^2.12.0"
-passlib = "^1.7.4"
-
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,4 +1,5 @@
 from typing import Optional
+from pydantic import Field
 from app.common.dto import BaseDto
 
 
@@ -6,9 +7,9 @@ class User(BaseDto):
     id: int
     is_bot: bool
     first_name: str
-    last_name: Optional[str]
-    username: Optional[str]
-    language_code: Optional[str]
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    language_code: Optional[str] = None
 
 
 class Chat(BaseDto):
@@ -20,12 +21,20 @@ class Chat(BaseDto):
     last_name: Optional[str]
 
 
+class MessageEntity(BaseDto):
+    type: str
+    offset: int
+    length: int
+
+
 class Message(BaseDto):
     message_id: int
-    from_user: Optional[User] = None
+    from_user: Optional[User] = Field(alias="from")
     date: int
     chat: Chat
     text: Optional[str] = None
+    entities: Optional[list[MessageEntity]] = None
+    new_chat_member: Optional[User] = None
 
 
 class Update(BaseDto):

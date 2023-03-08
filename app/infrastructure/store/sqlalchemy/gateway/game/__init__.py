@@ -1,3 +1,3 @@
 from .game import GameGatewayImpl # noqa
-from .game_gateway import GameGateway # noqa
+from .game_state import GameStateGatewayImpl # noqa
 from .player import PlayerGatewayImpl # noqa

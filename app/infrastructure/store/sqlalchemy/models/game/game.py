@@ -3,7 +3,7 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy.orm import relationship
 import uuid
 
-from app.infrastructure.store.sqlalchemy.model import Base
+from app.infrastructure.store.sqlalchemy.models import Base
 
 from app.core.chat import entities as chat_entities
 from app.core.game import entities as game_entities
@@ -15,9 +15,7 @@ class Game(Base):
     id = Column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    _chat_id = Column('chat_id', UUID(as_uuid=True), ForeignKey('chat.id'))
-
-    chat = relationship('Chat')
+    chat_id = Column('chat_id', UUID(as_uuid=True), ForeignKey('chat.id'))
 
 
 def game_mapping(mapper_registry):

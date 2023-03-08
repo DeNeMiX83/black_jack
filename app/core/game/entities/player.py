@@ -14,7 +14,7 @@ class PlayerStatus(Enum):
 @dataclass
 class Player(Entity):
     game: game_entity.Game
-    user: user_entity.entities.User
+    user: user_entity.User
     status: PlayerStatus = field(init=False, default=PlayerStatus.PLAYING)
     score: int = field(init=False, default=0)
     bet: int = field(init=False, default=0)

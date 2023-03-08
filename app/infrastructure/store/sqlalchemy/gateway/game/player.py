@@ -5,4 +5,4 @@ from app.core.game import entities
 
 class PlayerGatewayImpl(BaseGateway, PlayerGateway):
     async def create(self, player: entities.Player) -> None:
-        self.session.add(player)
+        self._session.add(player)

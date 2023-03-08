@@ -1,5 +1,5 @@
 from typing import Protocol
-from app.core.player import entities
+from app.core.game import entities
 
 
 class PlayerGateway(Protocol):

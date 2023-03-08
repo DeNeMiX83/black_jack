@@ -6,7 +6,7 @@ from app.core.game.protocols import (
 )
 from app.core.user.protocols import UserGateway
 from app.core.chat.protocols import ChatGateway
-from app.core.game import dto as game_dto
+from app.core.game import dto as chat_dto
 from app.core.game import entities as game_entities
 from app.core.user import entities as user_entities
 
@@ -29,14 +29,14 @@ class StartGameHandler(Handler):
         self._commiter = commiter
         self.game
 
-    async def execute(self, game: game_dto.GameCreate) -> None:
+    async def execute(self, game: chat_dto.GameCreate) -> None:
         await self._create_game(game)
         await self._create_game_state(self.game)
         await self._add_players_to_game(game.players, self.game)
 
         await self._commiter.commit()
 
-    async def _create_game(self, game: game_dto.GameCreate) -> None:
+    async def _create_game(self, game: chat_dto.GameCreate) -> None:
         chat = await self._chat_gateway.get_by_tg_id(game.chat.tg_id)
 
         self.game = game_entities.Game(chat=chat)
@@ -50,7 +50,7 @@ class StartGameHandler(Handler):
         await self._game_state_gateway.create(game_state)
 
     async def _add_players_to_game(
-        self, players: list[game_dto.PlayerCreate], game: game_entities.Game
+        self, players: list[chat_dto.PlayerCreate], game: game_entities.Game
     ) -> None:
         for player in players:
             try:
