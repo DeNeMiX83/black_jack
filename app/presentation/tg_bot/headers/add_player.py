@@ -25,7 +25,6 @@ async def _add_player(
     session: AsyncSession,
     bot: TgBot
 ):
-    logger.info(f"{update.callback_query.message.chat.id} player want add")
     add_player_handler = add_player(session)
     get_game_by_chat_tg_id_handler = get_game_by_chat_id(session)
 

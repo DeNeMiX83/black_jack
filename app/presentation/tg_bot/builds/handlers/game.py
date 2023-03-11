@@ -6,12 +6,14 @@ from app.infrastructure.store.sqlalchemy.gateway import (
     ChatGatewayImpl,
     PlayerGatewayImpl,
     UserGatewayImpl,
+    PlayerCardsGatewayImpl,
     CommiterImp,
 )
 from app.core.game.handlers import (
     CreateAndReturnGameHandler, AddPlayerHandler, GetGameByChatTgIdHandler,
     GetGamePlayersHandler, UpdateGameStateHandler, UpdatePlayerBetHandler,
-    UpdatePlayerStateHandler
+    UpdatePlayerStateHandler, GetCardHandler, GetPlayerHandler, 
+    GameOverHandler, DeletePlayerHandler
 )
 
 
@@ -84,3 +86,35 @@ def update_player_state(
     player_gateway = PlayerGatewayImpl(session)
     commiter = CommiterImp(session)
     return UpdatePlayerStateHandler(player_gateway, commiter)
+
+
+def get_card(
+    session: AsyncSession,
+) -> GetCardHandler:
+    player_gateway = PlayerGatewayImpl(session)
+    player_cards_gateway = PlayerCardsGatewayImpl(session)
+    commiter = CommiterImp(session)
+    return GetCardHandler(player_gateway, player_cards_gateway, commiter)
+
+
+def get_player(
+    session: AsyncSession,
+) -> GetPlayerHandler:
+    player_gateway = PlayerGatewayImpl(session)
+    return GetPlayerHandler(player_gateway)
+
+
+def game_over(
+    session: AsyncSession,
+) -> GameOverHandler:
+    game_gateway = GameGatewayImpl(session)
+    commiter = CommiterImp(session)
+    return GameOverHandler(game_gateway, commiter)
+
+
+def delete_player_by_id(
+    session: AsyncSession,
+) -> DeletePlayerHandler:
+    player_gateway = PlayerGatewayImpl(session)
+    commiter = CommiterImp(session)
+    return DeletePlayerHandler(player_gateway, commiter)

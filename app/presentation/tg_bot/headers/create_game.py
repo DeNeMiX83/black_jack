@@ -14,9 +14,11 @@ from app.core.game.exceptions import (
 from app.core.game import dto as game_dto
 from app.core.game import entities as game_entities
 from app.presentation.tg_bot.builds.handlers import (
-    game_create, update_game_state, get_game_players
+    game_create, update_game_state, get_game_players,
+    game_over
 )
-from app.presentation.tg_bot.headers.get_bet import transfer_stroke
+from app.presentation.tg_bot.headers.utils import start_procces_game_over
+from app.presentation.tg_bot.headers.get_bet import bet_transfer_stroke
 
 
 @tg_bot.message_handler(CommandFilter("/create_game"))
@@ -110,7 +112,8 @@ async def game_start(update: Update, bot: TgBot):
 
     session = await bot.get_session()
 
-    update_game_status_handler = update_game_state(session)
+    update_game_state_handler = update_game_state(session)
+    game_over_handler = game_over(session)
     get_players_handler = get_game_players(session)
 
     game_states_storage = update.game_states_storage
@@ -131,9 +134,21 @@ async def game_start(update: Update, bot: TgBot):
         await get_players_handler.execute(game_id)  # type: ignore
     )
 
-    text_players = 'Участников нету'
     if players:
         text_players = '\n'.join(f'{n + 1}. @{player.user.username}' for n, player in enumerate(players))
+    else:
+        await bot.send_message(
+            chat_id=update.message.chat.id,
+            text="Нет участников"
+        )
+        await start_procces_game_over(
+            update,
+            bot,
+            game_states_storage,
+            update_game_state_handler,
+            game_over_handler,
+        )
+        return
 
     await bot.send_message(
         chat_id=update.message.chat.id,
@@ -147,10 +162,9 @@ async def game_start(update: Update, bot: TgBot):
     new_game_state = game_dto.GameStateUpdate(
         game_id=game_id,
         new_state=game_entities.game_states.BET,
-        current_player=players[0]
     )
 
-    await update_game_status_handler.execute(new_game_state)
+    await update_game_state_handler.execute(new_game_state)
 
     game_states_storage.add_state(
         update.message.chat.id,
@@ -174,4 +188,4 @@ async def game_start(update: Update, bot: TgBot):
 
     # Сбор ставок
 
-    await transfer_stroke(update, players, bot)
+    await bet_transfer_stroke(update, players, bot)

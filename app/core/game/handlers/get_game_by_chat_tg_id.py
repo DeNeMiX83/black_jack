@@ -17,5 +17,4 @@ class GetGameByChatTgIdHandler(Handler):
     async def execute(self, chat: chat_dto.Chat) -> game_entities.Game:
         chat_entity = await self._chat_gateway.get_by_tg_id(chat.tg_id)
         game_entity = await self._game_gateway.get_by_chat_id(chat_entity.id)  # type: ignore
-
         return game_entity

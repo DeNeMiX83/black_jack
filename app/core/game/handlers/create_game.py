@@ -3,11 +3,10 @@ from app.core.common.exceptions import GatewayException
 from app.core.common.handler import Handler
 from app.core.common.protocols import Commiter
 from app.core.game.exceptions import (
-    ChatNotFoundException, GameAlreadyExistsException
+    ChatNotFoundException,
+    GameAlreadyExistsException,
 )
-from app.core.game.protocols import (
-    GameGateway, GameStateGateway
-)
+from app.core.game.protocols import GameGateway, GameStateGateway
 from app.core.chat.protocols import ChatGateway
 from app.core.game import dto as game_dto
 from app.core.game import entities as game_entities
@@ -38,14 +37,17 @@ class CreateAndReturnGameHandler(Handler):
     async def _create_game(self, game: game_dto.GameCreate) -> None:
         chat = await self._chat_gateway.get_by_tg_id(game.chat_tg_id)
         if chat is None:
-            raise ChatNotFoundException('Chat not found')
+            raise ChatNotFoundException("Chat not found")
+
+        game_not_over = await self._game_gateway.get_by_chat_id(
+            chat.id  # type: ignore
+        )
+        if game_not_over:
+            raise GameAlreadyExistsException("Game already exists")
 
         self._game = game_entities.Game(chat=chat)
 
-        try:
-            await self._game_gateway.create(self._game)
-        except GatewayException as e:
-            raise GameAlreadyExistsException(e)
+        await self._game_gateway.create(self._game)
 
     async def _create_game_state(self) -> None:
         game_state = game_entities.GameState(

@@ -1,6 +1,6 @@
 from uuid import UUID
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from app.infrastructure.store.sqlalchemy.gateway import BaseGateway
 from app.core.common.exceptions import GatewayException
 from app.core.game.protocols import PlayerGateway
@@ -27,3 +27,7 @@ class PlayerGatewayImpl(BaseGateway, PlayerGateway):
         except IntegrityError as e:
             await self._session.rollback()
             raise GatewayException(e)
+
+    async def delete_by_id(self, player_id: UUID) -> None:
+        stmt = delete(entities.Player).where(entities.Player.id == player_id)
+        await self._session.execute(stmt)

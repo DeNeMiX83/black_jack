@@ -12,6 +12,3 @@ class GameGateway(Protocol):
 
     async def create(self, game: Game) -> None:
         raise NotImplementedError
-
-    async def update(self, game: Game) -> None:
-        raise NotImplementedError

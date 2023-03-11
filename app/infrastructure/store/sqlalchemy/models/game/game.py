@@ -20,9 +20,9 @@ class Game(Base):
     )
     is_over = Column(Boolean, default=False)
 
-    __table_args__ = (
-        Index('idx_game_chat_id_is_over', chat_id, is_over, unique=True),
-    )
+    # __table_args__ = (
+    #     Index('idx_game_chat_id_is_over', chat_id, is_over, unique=True),
+    # )
 
 
 def game_mapping(mapper_registry):

@@ -10,4 +10,3 @@ class GameCreate(BaseDto):
 class GameStateUpdate(BaseDto):
     game_id: UUID
     new_state: game_entities.game_states
-    current_player: game_entities.Player

@@ -12,8 +12,10 @@ from app.core.game import dto as game_dto
 from app.core.game import entities as game_entities
 from app.presentation.tg_bot.builds.handlers import (
     update_player_bet, update_player_state, get_game_players,
-    update_game_state
+    update_game_state, get_player, delete_player_by_id, game_over
 )
+from app.presentation.tg_bot.headers.utils import start_procces_game_over
+from app.presentation.tg_bot.headers.motion import motion_transfer_stroke
 
 
 @tg_bot.message_handler(
@@ -25,6 +27,9 @@ async def _get_bet(
     session: AsyncSession,
     bot: TgBot
 ):
+    chat_id = update.message.chat.id
+    user_id = update.message.from_user.id
+
     update_player_bet_handler = update_player_bet(session)
     update_player_state_handler = update_player_state(session)
     player_states_storage: PlayerStatesStorage = update.player_states_storage
@@ -33,39 +38,42 @@ async def _get_bet(
 
     if not bet.isdigit():
         await bot.send_message(
-            chat_id=update.message.chat.id,
+            chat_id=chat_id,
             text='Неверный формат ставки'
         )
         return
     bet = int(bet)
 
     player_data = player_states_storage.get_state(
-        (update.message.chat.id, update.message.from_user.id)
+        (chat_id, user_id)
     )
+    player_id = player_data['player_id']
 
     bet_dto = game_dto.Bet(
-        player_id=player_data['player_id'],
+        player_id=player_id,
         bet=bet
     )
 
     await update_player_bet_handler.execute(bet_dto)
 
     new_state = game_dto.PlayerStateUpdate(
-        player_id=player_data['player_id'],
+        player_id=player_id,
         new_state=game_entities.player_status.PLAYING
     )
     await update_player_state_handler.execute(new_state)
     player_states_storage.add_state(
-        (update.message.chat.id, player_data['player_id']),
+        (chat_id, user_id),
         {
-            'state': game_entities.player_status.PLAYING
+            'state': game_entities.player_status.PLAYING,
+            'player_id': player_id,
         }
     )
 
-    logger.info(f'{update.message.chat.id}: сделал ставку: {bet}')
+    logger.info(f'{chat_id}: сделал ставку: {bet}')
+    logger.info(f'{chat_id}: user {user_id}: состояние сменилось на {new_state.new_state}')
 
 
-async def transfer_stroke(
+async def bet_transfer_stroke(
     update: Update,
     players: list[game_entities.Player],
     bot: TgBot
@@ -77,6 +85,9 @@ async def transfer_stroke(
     update_player_state_handler = update_player_state(session)
     update_game_state_handler = update_game_state(session)
     get_players_handler = get_game_players(session)
+    get_player_handler = get_player(session)
+    delete_player_by_id_handler = delete_player_by_id(session)
+    game_over_handler = game_over(session)
 
     game_states_storage: GameStatesStorage = update.game_states_storage
     player_states_storage: PlayerStatesStorage = update.player_states_storage
@@ -102,10 +113,32 @@ async def transfer_stroke(
             text=f'@{player.user.username} введите ставку'
         )
         await asyncio.sleep(10)
+        current_player = await get_player_handler.execute(player.id)
+        if current_player.bet == 0:
+            await bot.send_message(
+                chat_id=chat_id,
+                text=f'@{player.user.username} нет ставки. Удален из игры'
+            )
+            await delete_player_by_id_handler.execute(current_player.id)
+            continue
 
     players: list[game_entities.Player] = (
         await get_players_handler.execute(game_id)  # type: ignore
     )
+
+    if not players:
+        await bot.send_message(
+            chat_id=update.message.chat.id,
+            text="Нет участников"
+        )
+        await start_procces_game_over(
+            update,
+            bot,
+            game_states_storage,
+            update_game_state_handler,
+            game_over_handler,
+        )
+        return
 
     text = '\n'.join(
         f'{n + 1}. @{player.user.username} - {player.bet}'
@@ -134,6 +167,6 @@ async def transfer_stroke(
         }
     )
 
-
     logger.info(f"{chat_id}: Состояние игры изменилось на {new_game_state.new_state}")
 
+    await motion_transfer_stroke(update, players, bot)

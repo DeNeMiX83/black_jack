@@ -12,3 +12,6 @@ class PlayerGateway(Protocol):
 
     async def create(self, player: entities.Player) -> None:
         raise NotImplementedError
+
+    async def delete_by_id(self, player_id: UUID) -> None:
+        raise NotImplementedError

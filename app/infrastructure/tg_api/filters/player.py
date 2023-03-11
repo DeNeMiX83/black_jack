@@ -14,13 +14,17 @@ class PlayerStateFilter(Filter):
     ) -> bool:
         game_states_storage: PlayerStatesStorage = update.player_states_storage
     
-        message = update.message
         if update.callback_query is not None:
-            message = update.callback_query.message
-
-        chat_id = message.chat.id
-        player_data = game_states_storage.get_state(chat_id)
-        if player_data and player_data['state'] != self._state:
+            chat_id = update.callback_query.message.chat.id
+            user_id = update.callback_query.from_user.id
+        else:
+            chat_id = update.message.chat.id
+            user_id = update.message.from_user.id
+        
+        player_data = game_states_storage.get_state((chat_id, user_id))
+        if player_data is None:
+            return False
+        if player_data['state'] != self._state:
             return False
 
         return True

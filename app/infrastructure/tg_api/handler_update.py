@@ -21,9 +21,6 @@ class HandlerUpdates:
         update.game_states_storage = game_states_storage
         update.player_states_storage = player_states_storage
 
-        d = await self._bot.get_handlers()
-        logger.info('55555555555555555555555555555555555555')
-        logger.info([i._handler_func for i in d])
         for handler in await self._bot.get_handlers():
             if await handler.filter(update):
                 await handler.handle(update)

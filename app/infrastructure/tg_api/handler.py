@@ -27,9 +27,10 @@ class Handler():
 
     async def filter(self, update: Update) -> bool:
         for handler_filter in self._filters:
-            # print(handler_filter, handler_filter.check(update))
             if not handler_filter.check(update):
+                # print(handler_filter, handler_filter.check(update))
                 return False
+            # print()
         return True
 
     def add_filters(self, filters: list[Filter]) -> None:
