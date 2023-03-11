@@ -31,6 +31,6 @@ def game_mapping(mapper_registry):
         game_entities.Game,
         table,
         properties={
-            'chat': relationship(chat_entities.Chat)
+            'chat': relationship(chat_entities.Chat, lazy='joined')
         }
     )

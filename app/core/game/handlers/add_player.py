@@ -18,25 +18,24 @@ class AddPlayerHandler(Handler):
         game_gateway: GameGateway,
         player_gateway: PlayerGateway,
         user_gateway: UserGateway,
-        chat_gateway: ChatGateway,
         commiter: Commiter,
     ):
         self._game_gateway = game_gateway
         self._player_gateway = player_gateway
         self._user_gateway = user_gateway
-        self._chat_gateway = chat_gateway
         self._commiter = commiter
 
     async def execute(self, player: game_dto.PlayerCreate) -> None:
-        chat = await self._chat_gateway.get_by_tg_id(player.chat_id)
-        game = await self._game_gateway.get_by_chat_id(chat.id)
         user = await self._user_gateway.get_by_tg_id(player.tg_id)
+
         if user is None:
             user = user_entities.User(
                 tg_id=player.tg_id,
                 username=player.username,
             )
             await self._user_gateway.create(user)
+
+        game = await self._game_gateway.get(player.game_id)
 
         new_player = game_entities.Player(
             game=game,

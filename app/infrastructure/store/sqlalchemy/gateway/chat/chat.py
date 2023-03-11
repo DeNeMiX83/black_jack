@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
 from app.infrastructure.store.sqlalchemy.gateway import BaseGateway
@@ -15,7 +16,7 @@ class ChatGatewayImpl(BaseGateway, ChatGateway):
             await self._session.rollback()
             raise GatewayException(e)
 
-    async def get_by_tg_id(self, tg_id: int) -> entities.Chat:
+    async def get_by_tg_id(self, tg_id: int) -> Optional[entities.Chat]:
         stmt = select(entities.Chat).where(entities.Chat.tg_id == tg_id)
         result = await self._session.execute(stmt)
         return result.scalars().first()

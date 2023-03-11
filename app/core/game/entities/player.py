@@ -7,8 +7,9 @@ from app.core.game import entities as game_entity
 
 class PlayerStatus(Enum):
     PLAYING = 1
-    WIN = 2
-    LOSE = 3
+    BET = 2
+    WIN = 3
+    LOSE = 4
 
 
 @dataclass

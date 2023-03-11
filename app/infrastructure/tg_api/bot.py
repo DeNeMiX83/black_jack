@@ -1,5 +1,6 @@
 from typing import Optional
 from aiohttp import ClientSession
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.common.logger import logger
 from app.di.container import Container
 from app.settings import Settings
@@ -24,6 +25,10 @@ class TgBot():
         self._url: str = self.settings.tg_api_url_with_token
         updates = await self._di.resolve(Updates)
         await updates.start()
+
+    async def get_session(self) -> Container:
+        session = await self._di.resolve(AsyncSession)
+        return session
 
     async def get_handlers(self) -> list[Handler]:
         return self._handlers

@@ -16,7 +16,8 @@ class GameState(Base):
     )
     game_id = Column(
         'game_id',
-        UUID(as_uuid=True), ForeignKey('game.id'), nullable=False
+        UUID(as_uuid=True), ForeignKey('game.id', ondelete='CASCADE'),
+        nullable=False,
     )
     state = Column(Enum(entities.game_states), nullable=False)
     current_player_id = Column(

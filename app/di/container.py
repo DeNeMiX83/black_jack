@@ -23,6 +23,8 @@ class Container:
 
         if callable(dependency):
             dependencies = await self._get_dependencies_for_func(dependency)
+            if inspect.iscoroutinefunction(dependency):
+                return await dependency(*dependencies)
             if inspect.isasyncgenfunction(dependency):
                 async for value in dependency(*dependencies):
                     return value

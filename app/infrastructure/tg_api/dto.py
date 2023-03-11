@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 from pydantic import Field
 from app.common.dto import BaseDto
 
@@ -59,3 +59,6 @@ class Update(BaseDto):
     poll_answer: Optional[dict] = None
     my_chat_member: Optional[dict] = None
     chat_member: Optional[dict] = None
+
+    game_states_storage: Optional[Any] = None
+    player_states_storage: Optional[Any] = None

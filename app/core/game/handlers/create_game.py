@@ -13,7 +13,7 @@ from app.core.game import dto as game_dto
 from app.core.game import entities as game_entities
 
 
-class CreateGameAndGetHandler(Handler):
+class CreateAndReturnGameHandler(Handler):
     def __init__(
         self,
         game_gateway: GameGateway,
@@ -27,14 +27,16 @@ class CreateGameAndGetHandler(Handler):
         self._commiter = commiter
         self._game: Optional[game_entities.Game] = None
 
-    async def execute(self, game: game_dto.GameCreate) -> None:
+    async def execute(self, game: game_dto.GameCreate) -> game_entities.Game:
         await self._create_game(game)
         await self._create_game_state()
 
         await self._commiter.commit()
 
+        return self._game  # type: ignore
+
     async def _create_game(self, game: game_dto.GameCreate) -> None:
-        chat = await self._chat_gateway.get_by_tg_id(game.chat.tg_id)
+        chat = await self._chat_gateway.get_by_tg_id(game.chat_tg_id)
         if chat is None:
             raise ChatNotFoundException('Chat not found')
 
@@ -47,6 +49,6 @@ class CreateGameAndGetHandler(Handler):
 
     async def _create_game_state(self) -> None:
         game_state = game_entities.GameState(
-            game=self._game,
+            game=self._game,  # type: ignore
         )
         await self._game_state_gateway.create(game_state)

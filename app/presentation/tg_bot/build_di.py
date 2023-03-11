@@ -12,7 +12,7 @@ from app.presentation.tg_bot.builds import chat_build, game_build
 
 def build(container: Container) -> None:
     settings = Settings()
-    
+
     container.register(Settings, settings)
     container.register(AsyncSession, create_session_factory)
     container.register(HandlerUpdates, HandlerUpdates)

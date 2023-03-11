@@ -1,4 +1,3 @@
-from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
     async_sessionmaker,
@@ -8,10 +7,10 @@ from app.settings import Settings
 
 
 async def create_session_factory(settings: Settings):
-    engine = create_async_engine(settings.postgres.url, echo=True)
+    engine = create_async_engine(settings.postgres.url, echo=False)
 
     async_session = async_sessionmaker(
-        engine, class_=AsyncSession, expire_on_commit=False
+        engine, expire_on_commit=False, class_=AsyncSession
     )
 
     async with async_session() as session:

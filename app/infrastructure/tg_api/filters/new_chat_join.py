@@ -1,4 +1,3 @@
-from app.common.logger import logger
 from app.infrastructure.tg_api.filters import Filter
 from app.infrastructure.tg_api.dto import Update
 
