@@ -14,6 +14,10 @@ class PlayerStateUpdate(BaseDto):
     new_state: game_entities.player_status
 
 
+class PlayerResult(PlayerStateUpdate):
+    ...
+
+
 class Bet(BaseDto):
     player_id: UUID
     bet: int

@@ -10,3 +10,4 @@ from .get_card import GetCardHandler # noqa
 from .get_player import GetPlayerHandler # noqa
 from .game_over import GameOverHandler # noqa
 from .delete_player import DeletePlayerHandler # noqa
+from .save_player_results import SavePlayerResultsHandler # noqa

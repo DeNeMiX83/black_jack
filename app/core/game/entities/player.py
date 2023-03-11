@@ -11,6 +11,8 @@ class PlayerStatus(Enum):
     MOTION = 3
     SKIP = 4
     LOSE = 5
+    WIN = 6
+    DRAW = 7
 
 
 @dataclass

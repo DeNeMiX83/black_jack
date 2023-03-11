@@ -3,21 +3,22 @@ from app.core.game import dto as game_dto
 from app.core.game import entities as game_entities
 from app.infrastructure.tg_api import TgBot
 from app.infrastructure.tg_api.dto import Update
-from app.presentation.tg_bot.states import GameStatesStorage
-from app.core.game.handlers import (
-    UpdateGameStateHandler,
-    GameOverHandler
+from app.presentation.tg_bot.builds.handlers import (
+    update_game_state,
+    game_over,
 )
 
 
 async def start_procces_game_over(
     update: Update,
     bot: TgBot,
-    game_states_storage: GameStatesStorage,
-    update_game_state_handler: UpdateGameStateHandler,
-    game_over_handler: GameOverHandler,
 ):
     chat_id = update.message.chat.id
+
+    session = await bot.get_session()
+    game_states_storage = update.game_states_storage
+    update_game_state_handler = update_game_state(session)
+    game_over_handler = game_over(session)
 
     game_data = game_states_storage.get_state(chat_id)
     game_id = game_data["game_id"]
@@ -41,5 +42,5 @@ async def start_procces_game_over(
         },
     )
 
+    logger.info(f"{chat_id}: Состояние игры изменилось на {new_game_state.new_state}")
     logger.info(f"{chat_id}: Игра завершена")
-    return

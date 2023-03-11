@@ -178,10 +178,7 @@ async def game_start(update: Update, bot: TgBot):
         )
         await start_procces_game_over(
             update,
-            bot,
-            game_states_storage,
-            update_game_state_handler,
-            game_over_handler,
+            bot
         )
         return
 

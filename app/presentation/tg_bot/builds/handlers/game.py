@@ -13,7 +13,7 @@ from app.core.game.handlers import (
     CreateAndReturnGameHandler, AddPlayerHandler, GetGameByChatTgIdHandler,
     GetGamePlayersHandler, UpdateGameStateHandler, UpdatePlayerBetHandler,
     UpdatePlayerStateHandler, GetCardHandler, GetPlayerHandler, 
-    GameOverHandler, DeletePlayerHandler
+    GameOverHandler, DeletePlayerHandler, SavePlayerResultsHandler
 )
 
 
@@ -118,3 +118,11 @@ def delete_player_by_id(
     player_gateway = PlayerGatewayImpl(session)
     commiter = CommiterImp(session)
     return DeletePlayerHandler(player_gateway, commiter)
+
+
+def save_player_results(
+    session: AsyncSession,
+) -> SavePlayerResultsHandler:
+    player_gateway = PlayerGatewayImpl(session)
+    commiter = CommiterImp(session)
+    return SavePlayerResultsHandler(player_gateway, commiter)

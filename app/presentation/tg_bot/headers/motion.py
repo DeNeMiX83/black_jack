@@ -1,5 +1,6 @@
 import json
 import asyncio
+from random import randrange
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.common.logger import logger
 from app.infrastructure.tg_api import TgBot
@@ -11,7 +12,9 @@ from app.presentation.tg_bot.states import (
     PlayerStatesStorage,
 )
 from app.infrastructure.tg_api.filters import (
-    GameStateFilter, PlayerStateFilter, CallbackQueryDataFilter
+    GameStateFilter,
+    PlayerStateFilter,
+    CallbackQueryDataFilter,
 )
 from app.core.game import dto as game_dto
 from app.core.game import entities as game_entities
@@ -22,13 +25,15 @@ from app.presentation.tg_bot.builds.handlers import (
     get_card,
     get_player,
     game_over,
+    save_player_results,
 )
+from app.presentation.tg_bot.headers.utils import start_procces_game_over
 
 
 @tg_bot.callback_query_handler(
     GameStateFilter(GameStates.MOTION),
     PlayerStateFilter(game_entities.player_status.MOTION),
-    CallbackQueryDataFilter('player_get_card')
+    CallbackQueryDataFilter("player_get_card"),
 )
 async def _get_card(update: Update, session: AsyncSession, bot: TgBot):
     chat_id = update.callback_query.message.chat.id
@@ -47,8 +52,8 @@ async def _get_card(update: Update, session: AsyncSession, bot: TgBot):
 
     await bot.send_message(
         chat_id=chat_id,
-        text=f"@{player.user.username} вытянул карту {card.rank}.\n" +
-             f"Cчет: {player.score}",
+        text=f"@{player.user.username} вытянул карту {card.rank}.\n"
+        + f"Cчет: {player.score}",
     )
 
     if player.score > 21:
@@ -74,15 +79,13 @@ async def _get_card(update: Update, session: AsyncSession, bot: TgBot):
         },
     )
 
-    logger.info(
-        f"{chat_id}: user {user_id}: взял карту {card.rank}"
-    )
+    logger.info(f"{chat_id}: user {user_id}: взял карту {card.rank}")
 
 
 @tg_bot.callback_query_handler(
     GameStateFilter(GameStates.MOTION),
     PlayerStateFilter(game_entities.player_status.MOTION),
-    CallbackQueryDataFilter('player_pass')
+    CallbackQueryDataFilter("player_pass"),
 )
 async def _motion_pass(update: Update, session: AsyncSession, bot: TgBot):
     chat_id = update.callback_query.message.chat.id
@@ -112,15 +115,11 @@ async def _motion_pass(update: Update, session: AsyncSession, bot: TgBot):
         },
     )
 
-    logger.info(
-        f"{chat_id}: user {user_id}: пропуск хода"
-    )
+    logger.info(f"{chat_id}: user {user_id}: пропуск хода")
 
 
 @tg_bot.common_handler(GameStateFilter(GameStates.PRE_MOTION))
-async def motion_transfer_stroke(
-    update: Update, bot: TgBot
-):
+async def motion_transfer_stroke(update: Update, bot: TgBot):
     if update.callback_query is not None:
         chat_id = update.callback_query.message.chat.id
     else:
@@ -128,8 +127,6 @@ async def motion_transfer_stroke(
 
     session = await bot.get_session()
     update_player_state_handler = update_player_state(session)
-    update_game_state_handler = update_game_state(session)
-    game_over_handler = game_over(session)
     get_players_handler = get_game_players(session)
 
     game_states_storage: GameStatesStorage = update.game_states_storage
@@ -141,19 +138,20 @@ async def motion_transfer_stroke(
     game_states_storage.add_state(
         chat_id,
         {
-            'state': GameStates.MOTION,
-            'game_id': game_id,
-        }
+            "state": GameStates.MOTION,
+            "game_id": game_id,
+        },
     )
 
-    players: list[game_entities.Player] = (
-        await get_players_handler.execute(game_id)  # type: ignore
-    )
+    players: list[game_entities.Player] = await get_players_handler.execute(
+        game_id
+    )  # type: ignore
     while players:
         for i in range(len(players)):
             player = players[i]
             new_state = game_dto.PlayerStateUpdate(
-                player_id=player.id, new_state=game_entities.player_status.MOTION
+                player_id=player.id,
+                new_state=game_entities.player_status.MOTION,
             )
             await update_player_state_handler.execute(new_state)
             player_states_storage.add_state(
@@ -176,8 +174,8 @@ async def motion_transfer_stroke(
             }
             await bot.send_message(
                 chat_id=chat_id,
-                text=f"@{player.user.username} сделайте ход\n" +
-                     f"Ваш счет: {player.score}",
+                text=f"@{player.user.username} сделайте ход\n"
+                + f"Ваш счет: {player.score}",
                 reply_markup=json.dumps(inline_keyboard),
             )
             await asyncio.sleep(10)
@@ -185,37 +183,72 @@ async def motion_transfer_stroke(
         session = await bot.get_session()
         get_players_handler = get_game_players(session)
 
-        players: list[game_entities.Player] = (
-            await get_players_handler.execute(game_id)  # type: ignore
+        players: list[game_entities.Player] = await get_players_handler.execute(
+            game_id
+        )  # type: ignore
+        players = list(
+            filter(
+                lambda player: player.status
+                == game_entities.player_status.PLAYING,
+                players,
+            )
         )
-        players = list(filter(
-            lambda player: player.status == game_entities.player_status.PLAYING,
-            players
-        ))
+
+    await start_procces_game_over(update, bot)
+    players: list[game_entities.Player] = await get_players_handler.execute(
+        game_id
+    )  # type: ignore
+
+    logger.info("Подсчет результатов")
+
+    session = await bot.get_session()
+    update_player_state_handler = update_player_state(session)
+    dealer_result = randrange(14, 25)
+
+    text = f"Дилер: {dealer_result}\n"
+    lose = []
+    win = []
+    draw = []
+    for n, player in enumerate(players):
+        if player.status == game_entities.player_status.LOSE:
+            text += f"{n + 1}. @{player.user.username} \t проиграл счет: {player.score}\n"
+            lose.append(player.id)
+        elif dealer_result > 21:
+            text += f"{n + 1}. @{player.user.username} \t выйграл счет: {player.score}\n"
+            win.append(player.id)
+        elif player.score < dealer_result:
+            text += f"{n + 1}. @{player.user.username} \t проиграл счет: {player.score}\n"
+            lose.append(player.id)
+        elif player.score == dealer_result:
+            text += f"{n + 1}. @{player.user.username} \t ничья счет: {player.score}\n"
+            draw.append(player.id)
+        else:
+            text += f"{n + 1}. @{player.user.username} \t выйграл счет: {player.score}\n"
+            win.append(player.id)
+
+    results = []
+    for player_id in lose:
+        new_result = game_dto.PlayerResult(
+            player_id=player_id, new_state=game_entities.player_status.LOSE
+        )
+        results.append(new_result)
+    for player_id in win:
+        new_result = game_dto.PlayerResult(
+            player_id=player_id, new_state=game_entities.player_status.WIN
+        )
+        results.append(new_result)
+    for player_id in draw:
+        new_result = game_dto.PlayerResult(
+            player_id=player_id, new_state=game_entities.player_status.DRAW
+        )
+        results.append(new_result)
+
+    save_player_results_handler = save_player_results(session)
+    await save_player_results_handler.execute(results)
 
     await bot.send_message(
         chat_id=chat_id,
-        text='Игра завершена\n'
+        text=text,
     )
 
-    logger.info(f'{chat_id}: Игра завершена')
-
-    new_game_state = game_dto.GameStateUpdate(
-        game_id=game_id,
-        new_state=game_entities.game_states.STOP,
-    )
-
-    await update_game_state_handler.execute(new_game_state)
-    await game_over_handler.execute(game_id)
-
-    game_states_storage.add_state(
-        chat_id,
-        {
-            'state': GameStates.STOP,
-            'game_id': game_id,
-        }
-    )
-
-    logger.info(f"{chat_id}: Состояние игры изменилось на {new_game_state.new_state}")
-
-    await bot.seng_update(update)
+    logger.info("Результаты подсчитаны")
