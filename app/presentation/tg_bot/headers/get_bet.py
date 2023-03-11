@@ -120,7 +120,7 @@ async def bet_transfer_stroke(update: Update, bot: TgBot):
             },
         )
         await bot.send_message(
-            chat_id=chat_id, text=f"@{player.user.username} введите ставку"
+            chat_id=chat_id, text=f"@{player.user.username} введите ставку\nБаланс: {player.user.balance}"
         )
         await asyncio.sleep(10)
 

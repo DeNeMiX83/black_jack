@@ -21,10 +21,8 @@ from app.core.game import entities as game_entities
 from app.presentation.tg_bot.builds.handlers import (
     update_player_state,
     get_game_players,
-    update_game_state,
     get_card,
     get_player,
-    game_over,
     save_player_results,
 )
 from app.presentation.tg_bot.headers.utils import start_procces_game_over
@@ -178,7 +176,7 @@ async def motion_transfer_stroke(update: Update, bot: TgBot):
                 + f"Ваш счет: {player.score}",
                 reply_markup=json.dumps(inline_keyboard),
             )
-            await asyncio.sleep(10)
+            await asyncio.sleep(5)
 
         session = await bot.get_session()
         get_players_handler = get_game_players(session)
@@ -229,17 +227,24 @@ async def motion_transfer_stroke(update: Update, bot: TgBot):
     results = []
     for player_id in lose:
         new_result = game_dto.PlayerResult(
-            player_id=player_id, new_state=game_entities.player_status.LOSE
+            player_id=player_id,
+            new_state=game_entities.player_status.LOSE,
+            winning=0
         )
+
         results.append(new_result)
     for player_id in win:
         new_result = game_dto.PlayerResult(
-            player_id=player_id, new_state=game_entities.player_status.WIN
+            player_id=player_id,
+            new_state=game_entities.player_status.WIN,
+            winning=player.bet * 2
         )
         results.append(new_result)
     for player_id in draw:
         new_result = game_dto.PlayerResult(
-            player_id=player_id, new_state=game_entities.player_status.DRAW
+            player_id=player_id,
+            new_state=game_entities.player_status.DRAW,
+            winning=player.bet * 1.5
         )
         results.append(new_result)
 

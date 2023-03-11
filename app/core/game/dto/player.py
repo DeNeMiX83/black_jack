@@ -15,7 +15,7 @@ class PlayerStateUpdate(BaseDto):
 
 
 class PlayerResult(PlayerStateUpdate):
-    ...
+    winning: int
 
 
 class Bet(BaseDto):

@@ -21,5 +21,6 @@ class SavePlayerResultsHandler(Handler):
             logger.info(f"Saving player result: {result}")
             player = await self._player_gateway.get(result.player_id)
             player.status = result.new_state
+            player.user.balance += result.winning
 
         await self._commiter.commit()
