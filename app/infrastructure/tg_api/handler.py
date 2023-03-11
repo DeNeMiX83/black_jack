@@ -18,19 +18,16 @@ class Handler():
         values = signature.parameters.values()
         dependencies = []
         for value in values:
-            if value.name in ('update', 'session'):
+            if value.name in ('update'):
                 continue
             impl = await self._di.resolve(value.annotation)
             dependencies.append(impl)
-        session = await self._di.resolve(AsyncSession)
-        await self._handler_func(update, session, *dependencies)
+        await self._handler_func(update, *dependencies)
 
     async def filter(self, update: Update) -> bool:
         for handler_filter in self._filters:
             if not handler_filter.check(update):
-                # print(handler_filter, handler_filter.check(update))
                 return False
-            # print()
         return True
 
     def add_filters(self, filters: list[Filter]) -> None:

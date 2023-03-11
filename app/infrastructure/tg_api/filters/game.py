@@ -1,11 +1,10 @@
 from app.infrastructure.tg_api.filters import Filter
 from app.infrastructure.tg_api.dto import Update
-from app.core.game.entities import game_states
-from app.presentation.tg_bot.states import GameStatesStorage
+from app.presentation.tg_bot.states import GameStatesStorage, GameStates
 
 
 class GameStateFilter(Filter):
-    def __init__(self, state: game_states) -> None:
+    def __init__(self, state: GameStates) -> None:
         self._state = state
 
     def check(
@@ -20,6 +19,7 @@ class GameStateFilter(Filter):
 
         chat_id = message.chat.id
         game_data = game_states_storage.get_state(chat_id)
+
         if game_data is None:
             return False
         if game_data['state'] != self._state:

@@ -12,6 +12,17 @@ class CallbackQueryFilter(Filter):
         return update.callback_query is not None
 
 
+class CallbackQueryDataFilter(Filter):
+    def __init__(self, callback_data: str):
+        self._callback_data = callback_data
+
+    def check(self, update: Update):
+        return (
+            update.callback_query is not None
+            and update.callback_query.data == self._callback_data
+        )
+
+
 class GroupFilter(Filter):
     def check(self, update: Update) -> bool:
         return update.message.chat.type == "group"  # type: ignore

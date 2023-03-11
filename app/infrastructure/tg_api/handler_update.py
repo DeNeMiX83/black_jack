@@ -24,3 +24,4 @@ class HandlerUpdates:
         for handler in await self._bot.get_handlers():
             if await handler.filter(update):
                 await handler.handle(update)
+                break

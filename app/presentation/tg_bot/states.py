@@ -1,5 +1,15 @@
 from typing import Optional
-from app.core.game.entities import game_states
+from enum import Enum
+
+
+class GameStates(Enum):
+    PRE_START = 'start'
+    START = 'start'
+    PRE_BET = 'bet'
+    BET = 'bet'
+    PRE_MOTION = 'motion'
+    MOTION = 'motion'
+    STOP = 'stop'
 
 
 class GameStatesStorage():

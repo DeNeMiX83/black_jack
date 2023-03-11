@@ -1,14 +1,16 @@
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from aiohttp import ClientSession
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.common.logger import logger
 from app.di.container import Container
 from app.settings import Settings
-from app.infrastructure.tg_api.dto import Message
+from app.infrastructure.tg_api.dto import Update, Message
 from app.infrastructure.tg_api.handler import Handler
 from app.infrastructure.tg_api.filters import (
     Filter, MessageFilter, CallbackQueryFilter
 )
+if TYPE_CHECKING:
+    from app.infrastructure.tg_api.handler_update import HandlerUpdates
 
 
 class TgBot():
@@ -16,10 +18,14 @@ class TgBot():
         self._url: Optional[str] = None
         self._session = ClientSession()
         self._handlers: list[Handler] = []
+        self._handler_updates: 'HandlerUpdates'
         self._di = di
 
     async def start(self):
         from app.infrastructure.tg_api.updates import Updates
+        from app.infrastructure.tg_api.handler_update import HandlerUpdates
+
+        self._handler_updates = await self._di.resolve(HandlerUpdates)
 
         self.settings: Settings = await self._di.resolve(Settings)
         self._url: str = self.settings.tg_api_url_with_token
@@ -32,6 +38,9 @@ class TgBot():
 
     async def get_handlers(self) -> list[Handler]:
         return self._handlers
+
+    async def seng_update(self, update: Update) -> None:
+        await self._handler_updates.handle_updates([update])
 
     async def send_message(self, **kwargs) -> Message:
         url = f"{self._url}/sendMessage"
