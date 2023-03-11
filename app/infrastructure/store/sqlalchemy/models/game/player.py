@@ -1,5 +1,5 @@
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import Column, Enum, Integer, ForeignKey
+from sqlalchemy import Column, Enum, Integer, ForeignKey, Index
 from sqlalchemy.orm import relationship
 import uuid
 
@@ -20,6 +20,10 @@ class Player(Base):
     status = Column(Enum(game_entities.player_status), nullable=False)
     score = Column(Integer, nullable=False)
     bet = Column(Integer, nullable=False)
+
+    __table_args__ = (
+        Index('idx_game_id_user_id', game_id, user_id, unique=True),
+    )
 
 
 def player_mapping(mapper_registry):

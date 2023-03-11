@@ -27,29 +27,34 @@ from app.presentation.tg_bot.headers.utils import start_procces_game_over
     GameStateFilter(GameStates.START),
     CallbackQueryDataFilter('user_join_game')
 )
-async def _add_player(update: Update, session: AsyncSession, bot: TgBot):
+async def _add_player(update: Update, bot: TgBot):
+    chat_id = update.callback_query.message.chat.id
+
+    session = await bot.get_session()
     add_player_handler = add_player(session)
-    get_game_by_chat_tg_id_handler = get_game_by_chat_id(session)
+    game_states_storage = update.game_states_storage
+
+    game_data = game_states_storage.get_state(chat_id)
+    game_id = game_data["game_id"]
 
     chat = chat_dto.Chat(
-        tg_id=update.callback_query.message.chat.id,  # type: ignore
+        tg_id=chat_id,  # type: ignore
         name=update.callback_query.message.chat.title,  # type: ignore
     )
-
-    game = await get_game_by_chat_tg_id_handler.execute(chat)
 
     player_create = game_dto.PlayerCreate(
         tg_id=update.callback_query.from_user.id,  # type: ignore
         username=update.callback_query.from_user.username,  # type: ignore
-        game_id=game.id,
+        game_id=game_id,
     )
 
     try:
         await add_player_handler.execute(player_create)
     except PlayerAlreadyExistsException:
-        pass
+        return
+        
     logger.info(
-        f"{chat.tg_id}: user - {player_create.tg_id} added to game: {game.id}"
+        f"{chat.tg_id}: user - {player_create.tg_id} added to game: {game_id}"
     )
 
 
@@ -214,7 +219,7 @@ async def game_start(update: Update, bot: TgBot):
             },
         )
         logger.info(
-            f"{chat_id}: Состояние игрока изменилось на " +
+            f"{chat_id}: user {user_id} новое состояние " +
             f"{game_entities.player_status.PLAYING}"
         )
 

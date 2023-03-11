@@ -3,11 +3,11 @@ from enum import Enum
 
 
 class GameStates(Enum):
-    PRE_START = 'start'
+    PRE_START = 'pre_start'
     START = 'start'
-    PRE_BET = 'bet'
+    PRE_BET = 'pre_bet'
     BET = 'bet'
-    PRE_MOTION = 'motion'
+    PRE_MOTION = 'pre_motion'
     MOTION = 'motion'
     STOP = 'stop'
 

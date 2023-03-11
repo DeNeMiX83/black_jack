@@ -79,10 +79,8 @@ async def _get_bet(update: Update, session: AsyncSession, bot: TgBot):
 async def bet_transfer_stroke(update: Update, bot: TgBot):
     if update.callback_query is not None:
         chat_id = update.callback_query.message.chat.id
-        user_id = update.callback_query.from_user.id
     else:
         chat_id = update.message.chat.id
-        user_id = update.message.from_user.id
 
     session = await bot.get_session()
     update_player_state_handler = update_player_state(session)
@@ -115,8 +113,11 @@ async def bet_transfer_stroke(update: Update, bot: TgBot):
         )
         await update_player_state_handler.execute(new_state)
         player_states_storage.add_state(
-            (chat_id, user_id),
-            {"state": game_entities.player_status.BET, "player_id": player.id},
+            (chat_id, player.user.tg_id),
+            {
+                "state": game_entities.player_status.BET,
+                "player_id": player.id
+            },
         )
         await bot.send_message(
             chat_id=chat_id, text=f"@{player.user.username} введите ставку"
@@ -132,7 +133,6 @@ async def bet_transfer_stroke(update: Update, bot: TgBot):
                 text=f"@{player.user.username} нет ставки. Удален из игры",
             )
             await delete_player_by_id_handler.execute(current_player.id)
-            continue
 
     session = await bot.get_session()
     get_players_handler = get_game_players(session)
@@ -181,5 +181,4 @@ async def bet_transfer_stroke(update: Update, bot: TgBot):
         f"{chat_id}: Состояние игры изменилось на {new_game_state.new_state}"
     )
 
-    print(update, '////////////////////////////')
     await bot.seng_update(update)

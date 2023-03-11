@@ -47,7 +47,8 @@ async def _get_card(update: Update, session: AsyncSession, bot: TgBot):
 
     await bot.send_message(
         chat_id=chat_id,
-        text=f"Вы вытянули карту {card.rank}.\nВаш счет: {player.score}",
+        text=f"@{player.user.username} вытянул карту {card.rank}.\n" +
+             f"Cчет: {player.score}",
     )
 
     if player.score > 21:
@@ -56,8 +57,9 @@ async def _get_card(update: Update, session: AsyncSession, bot: TgBot):
         )
         await bot.send_message(
             chat_id=chat_id,
-            text="Вы проиграли!",
+            text=f"@{player.user.username} проиграл",
         )
+        logger.info(f"{chat_id}: user {player.user.tg_id} проиграл")
     else:
         new_state = game_dto.PlayerStateUpdate(
             player_id=player_id, new_state=game_entities.player_status.PLAYING
@@ -121,10 +123,8 @@ async def motion_transfer_stroke(
 ):
     if update.callback_query is not None:
         chat_id = update.callback_query.message.chat.id
-        user_id = update.callback_query.from_user.id
     else:
         chat_id = update.message.chat.id
-        user_id = update.message.from_user.id
 
     session = await bot.get_session()
     update_player_state_handler = update_player_state(session)
@@ -157,7 +157,7 @@ async def motion_transfer_stroke(
             )
             await update_player_state_handler.execute(new_state)
             player_states_storage.add_state(
-                (chat_id, user_id),
+                (chat_id, player.user.tg_id),
                 {"state": new_state.new_state, "player_id": player.id},
             )
             inline_keyboard = {
@@ -176,7 +176,8 @@ async def motion_transfer_stroke(
             }
             await bot.send_message(
                 chat_id=chat_id,
-                text=f"@{player.user.username} сделайте ход",
+                text=f"@{player.user.username} сделайте ход\n" +
+                     f"Ваш счет: {player.score}",
                 reply_markup=json.dumps(inline_keyboard),
             )
             await asyncio.sleep(10)
