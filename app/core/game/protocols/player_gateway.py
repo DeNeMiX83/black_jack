@@ -4,7 +4,7 @@ from app.core.game import entities
 
 
 class PlayerGateway(Protocol):
-    async def get(self, player_id: UUID) -> entities.Player:
+    async def get(self, player_id: UUID, for_update=False) -> entities.Player:
         raise NotImplementedError
 
     async def get_players_by_game_id(self, game_id: UUID) -> list[entities.Player]:

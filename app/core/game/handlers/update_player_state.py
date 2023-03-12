@@ -16,7 +16,9 @@ class UpdatePlayerStateHandler(Handler):
         self._commiter = commiter
 
     async def execute(self, state: dto.PlayerStateUpdate) -> None:
-        player = await self._player_gateway.get(state.player_id)
+        player = await self._player_gateway.get(
+            state.player_id, for_update=True
+        )
 
         player.status = state.new_state
 

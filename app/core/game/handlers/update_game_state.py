@@ -18,7 +18,7 @@ class UpdateGameStateHandler(Handler):
 
     async def execute(self, game_state: game_dto.GameStateUpdate) -> None:
         game_state_entity = await self._game_state_gateway.get_by_game_id(
-            game_state.game_id  # type: ignore
+            game_state.game_id, for_update=True
         )
 
         game_state_entity.state = game_state.new_state

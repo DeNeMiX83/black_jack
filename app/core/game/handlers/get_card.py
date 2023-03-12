@@ -18,15 +18,15 @@ class GetCardHandler(Handler):
         self._commiter = commiter
 
     async def execute(self, player_id: UUID) -> game_entities.Card:
-        cards = [
+        cards = (
             "1", "2", "3", "4", "5",
             "6", "7", "8", "9", "10",
             "J", "Q", "K", "A",
-        ]
+        )
         rank = choice(cards)
         card = game_entities.Card(rank)
 
-        player = await self._player_gateway.get(player_id)
+        player = await self._player_gateway.get(player_id, for_update=True)
         player_card = game_entities.PlayerCard(
             player=player,
             card=card

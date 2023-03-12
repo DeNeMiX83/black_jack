@@ -8,8 +8,10 @@ from app.core.game import entities
 
 
 class PlayerGatewayImpl(BaseGateway, PlayerGateway):
-    async def get(self, player_id: UUID) -> entities.Player:
+    async def get(self, player_id: UUID, for_update=False) -> entities.Player:
         stmt = select(entities.Player).where(entities.Player.id == player_id)
+        if for_update:
+            stmt = stmt.with_for_update()
         result = await self._session.execute(stmt)
         return result.scalars().first()
 

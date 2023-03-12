@@ -1,4 +1,3 @@
-from app.common.logger import logger
 from app.core.common.handler import Handler
 from app.core.common.protocols import Commiter
 from app.core.game.protocols import (
@@ -18,8 +17,9 @@ class SavePlayerResultsHandler(Handler):
 
     async def execute(self, results: list[dto.PlayerResult]) -> None:
         for result in results:
-            logger.info(f"Saving player result: {result}")
-            player = await self._player_gateway.get(result.player_id)
+            player = await self._player_gateway.get(
+                result.player_id, for_update=True
+            )
             player.status = result.new_state
             player.user.balance += result.winning
 
