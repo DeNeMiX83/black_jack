@@ -20,10 +20,6 @@ class GameState(Base):
         nullable=False,
     )
     state = Column(Enum(entities.game_states), nullable=False)
-    current_player_id = Column(
-        'current_player_id',
-        UUID(as_uuid=True), ForeignKey('player.id')
-    )
 
 
 def game_state_mapping(mapper_registry):
@@ -33,6 +29,5 @@ def game_state_mapping(mapper_registry):
         table,
         properties={
             'game': relationship(entities.Game),
-            'current_player': relationship(entities.Player),
         }
     )

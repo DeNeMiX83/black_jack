@@ -42,5 +42,6 @@ async def start_procces_game_over(
         },
     )
 
-    logger.info(f"{chat_id}: Состояние игры изменилось на {new_game_state.new_state}")
+    logger.info(f"{chat_id}: Состояние игры изменилось " +
+                f"на {new_game_state.new_state}")
     logger.info(f"{chat_id}: Игра завершена")

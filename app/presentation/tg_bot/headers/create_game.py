@@ -1,7 +1,6 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from app.common.logger import logger
 from app.presentation.tg_bot.states import (
-    GameStatesStorage, GameStates
+    GameStates
 )
 from app.infrastructure.tg_api import TgBot
 from app.infrastructure.tg_api.dto import Update

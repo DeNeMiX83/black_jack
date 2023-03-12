@@ -123,12 +123,7 @@ async def motion_transfer_stroke(update: Update, bot: TgBot):
     else:
         chat_id = update.message.chat.id
 
-    session = await bot.get_session()
-    update_player_state_handler = update_player_state(session)
-    get_players_handler = get_game_players(session)
-
     game_states_storage: GameStatesStorage = update.game_states_storage
-    player_states_storage: PlayerStatesStorage = update.player_states_storage
 
     game_data = game_states_storage.get_state(chat_id)
     game_id = game_data["game_id"]
@@ -140,6 +135,29 @@ async def motion_transfer_stroke(update: Update, bot: TgBot):
             "game_id": game_id,
         },
     )
+
+    await timer_waiting_moves(update, bot)
+
+    await start_procces_game_over(update, bot)
+
+    await save_game_results(update, bot)
+
+
+async def timer_waiting_moves(update: Update, bot: TgBot):
+    if update.callback_query is not None:
+        chat_id = update.callback_query.message.chat.id
+    else:
+        chat_id = update.message.chat.id
+
+    session = await bot.get_session()
+
+    get_players_handler = get_game_players(session)
+    update_player_state_handler = update_player_state(session)
+    player_states_storage = update.player_states_storage
+    game_states_storage = update.game_states_storage
+
+    game_data = game_states_storage.get_state(chat_id)
+    game_id = game_data["game_id"]
 
     players: list[game_entities.Player] = await get_players_handler.execute(
         game_id
@@ -181,7 +199,7 @@ async def motion_transfer_stroke(update: Update, bot: TgBot):
         session = await bot.get_session()
         get_players_handler = get_game_players(session)
 
-        players: list[game_entities.Player] = await get_players_handler.execute(
+        players = await get_players_handler.execute(
             game_id
         )  # type: ignore
         players = list(
@@ -192,15 +210,25 @@ async def motion_transfer_stroke(update: Update, bot: TgBot):
             )
         )
 
-    await start_procces_game_over(update, bot)
+
+async def save_game_results(update: Update, bot: TgBot):
+    if update.callback_query is not None:
+        chat_id = update.callback_query.message.chat.id
+    else:
+        chat_id = update.message.chat.id
+
+    session = await bot.get_session()
+
+    get_players_handler = get_game_players(session)
+    game_states_storage = update.game_states_storage
+
+    game_data = game_states_storage.get_state(chat_id)
+    game_id = game_data["game_id"]
+
     players: list[game_entities.Player] = await get_players_handler.execute(
         game_id
     )  # type: ignore
 
-    logger.info("Подсчет результатов")
-
-    session = await bot.get_session()
-    update_player_state_handler = update_player_state(session)
     dealer_result = randrange(14, 25)
 
     text = f"Дилер: {dealer_result}\n"
@@ -209,19 +237,24 @@ async def motion_transfer_stroke(update: Update, bot: TgBot):
     draw = []
     for n, player in enumerate(players):
         if player.status == game_entities.player_status.LOSE:
-            text += f"{n + 1}. @{player.user.username} \t проиграл счет: {player.score}\n"
+            text += f"{n + 1}. @{player.user.username} \t проиграл\n" + \
+                    "счет: {player.score}\n"
             lose.append(player.id)
         elif dealer_result > 21:
-            text += f"{n + 1}. @{player.user.username} \t выйграл счет: {player.score}\n"
+            text += f"{n + 1}. @{player.user.username} \t выйграл\n" + \
+                    "счет: {player.score}\n"
             win.append(player.id)
         elif player.score < dealer_result:
-            text += f"{n + 1}. @{player.user.username} \t проиграл счет: {player.score}\n"
+            text += f"{n + 1}. @{player.user.username} \t проиграл\n" + \
+                    "счет: {player.score}\n"
             lose.append(player.id)
         elif player.score == dealer_result:
-            text += f"{n + 1}. @{player.user.username} \t ничья счет: {player.score}\n"
+            text += f"{n + 1}. @{player.user.username} \t ничья\n" + \
+                    "счет: {player.score}\n"
             draw.append(player.id)
         else:
-            text += f"{n + 1}. @{player.user.username} \t выйграл счет: {player.score}\n"
+            text += f"{n + 1}. @{player.user.username} \t выйграл\n" + \
+                    "счет: {player.score}\n"
             win.append(player.id)
 
     results = []
@@ -229,7 +262,7 @@ async def motion_transfer_stroke(update: Update, bot: TgBot):
         new_result = game_dto.PlayerResult(
             player_id=player_id,
             new_state=game_entities.player_status.LOSE,
-            winning=0
+            winning=0,
         )
 
         results.append(new_result)
@@ -237,14 +270,14 @@ async def motion_transfer_stroke(update: Update, bot: TgBot):
         new_result = game_dto.PlayerResult(
             player_id=player_id,
             new_state=game_entities.player_status.WIN,
-            winning=player.bet * 2
+            winning=player.bet * 2,
         )
         results.append(new_result)
     for player_id in draw:
         new_result = game_dto.PlayerResult(
             player_id=player_id,
             new_state=game_entities.player_status.DRAW,
-            winning=player.bet * 1.5
+            winning=player.bet * 1.5,
         )
         results.append(new_result)
 
