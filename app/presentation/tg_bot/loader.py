@@ -10,7 +10,9 @@ container = Container()
 tg_bot = TgBot(container)
 game_states_storage = GameStatesStorage()
 player_states_storage = PlayerStatesStorage()
+
 container.register(TgBot, tg_bot)
 container.register(GameStatesStorage, game_states_storage)
 container.register(PlayerStatesStorage, player_states_storage)
+
 build_di.build(container)
