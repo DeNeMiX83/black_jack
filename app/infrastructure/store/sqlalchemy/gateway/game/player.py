@@ -1,6 +1,6 @@
 from uuid import UUID
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, update
 from app.infrastructure.store.sqlalchemy.gateway import BaseGateway
 from app.core.common.exceptions import GatewayException
 from app.core.game.protocols import PlayerGateway
@@ -8,10 +8,8 @@ from app.core.game import entities
 
 
 class PlayerGatewayImpl(BaseGateway, PlayerGateway):
-    async def get(self, player_id: UUID, for_update=False) -> entities.Player:
+    async def get(self, player_id: UUID) -> entities.Player:
         stmt = select(entities.Player).where(entities.Player.id == player_id)
-        if for_update:
-            stmt = stmt.with_for_update()
         result = await self._session.execute(stmt)
         return result.scalars().first()
 
@@ -29,6 +27,19 @@ class PlayerGatewayImpl(BaseGateway, PlayerGateway):
         except IntegrityError as e:
             await self._session.rollback()
             raise GatewayException(e)
+
+    async def update(self, player: entities.Player) -> None:
+        await self._session.execute(
+            update(entities.Player)
+            .where(entities.Player.id == player.id)
+            .values(
+                game_id=player.game.id,
+                user_id=player.user.id,
+                status=player.status,
+                score=player.score,
+                bet=player.bet
+            )
+        )
 
     async def delete_by_id(self, player_id: UUID) -> None:
         stmt = delete(entities.Player).where(entities.Player.id == player_id)

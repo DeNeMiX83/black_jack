@@ -82,6 +82,7 @@ async def bet_transfer_stroke(update: Update, bot: TgBot):
         chat_id = update.callback_query.message.chat.id
     else:
         chat_id = update.message.chat.id
+    logger.info(f"{chat_id}: Начало принятия ставок")
 
     session = await bot.get_session()
     get_players_handler = get_game_players(session)
@@ -130,7 +131,10 @@ async def bet_transfer_stroke(update: Update, bot: TgBot):
 
 
 async def timer_waiting_moves(update: Update, bot: TgBot):
-    chat_id = update.message.chat.id
+    if update.callback_query is not None:
+        chat_id = update.callback_query.message.chat.id
+    else:
+        chat_id = update.message.chat.id
 
     session = await bot.get_session()
     get_players_handler = get_game_players(session)
@@ -177,7 +181,10 @@ async def timer_waiting_moves(update: Update, bot: TgBot):
 
 
 async def set_state(update: Update, bot: TgBot):
-    chat_id = update.message.chat.id
+    if update.callback_query is not None:
+        chat_id = update.callback_query.message.chat.id
+    else:
+        chat_id = update.message.chat.id
 
     session = await bot.get_session()
     update_game_state_handler = update_game_state(session)

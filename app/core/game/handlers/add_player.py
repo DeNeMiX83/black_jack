@@ -32,6 +32,7 @@ class AddPlayerHandler(Handler):
             user = user_entities.User(
                 tg_id=player.tg_id,
                 username=player.username,
+                balance=1000,
             )
             await self._user_gateway.create(user)
 

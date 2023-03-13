@@ -238,23 +238,23 @@ async def save_game_results(update: Update, bot: TgBot):
     for n, player in enumerate(players):
         if player.status == game_entities.player_status.LOSE:
             text += f"{n + 1}. @{player.user.username} \t проиграл\n" + \
-                    "счет: {player.score}\n"
+                    f"счет: {player.score}\n"
             lose.append(player.id)
         elif dealer_result > 21:
             text += f"{n + 1}. @{player.user.username} \t выйграл\n" + \
-                    "счет: {player.score}\n"
+                    f"счет: {player.score}\n"
             win.append(player.id)
         elif player.score < dealer_result:
             text += f"{n + 1}. @{player.user.username} \t проиграл\n" + \
-                    "счет: {player.score}\n"
+                    f"счет: {player.score}\n"
             lose.append(player.id)
         elif player.score == dealer_result:
             text += f"{n + 1}. @{player.user.username} \t ничья\n" + \
-                    "счет: {player.score}\n"
+                    f"счет: {player.score}\n"
             draw.append(player.id)
         else:
             text += f"{n + 1}. @{player.user.username} \t выйграл\n" + \
-                    "счет: {player.score}\n"
+                    f"счет: {player.score}\n"
             win.append(player.id)
 
     results = []
