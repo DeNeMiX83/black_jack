@@ -17,3 +17,9 @@ class Card(Entity):
             return 11
         else:
             return int(self.rank)
+
+    def __composite_values__(self):
+        return (
+            self.rank,
+            self.weight,
+        )

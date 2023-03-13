@@ -1,0 +1,2 @@
+class PlayerAlreadyExistsException(Exception):
+    pass

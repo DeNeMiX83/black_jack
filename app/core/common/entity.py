@@ -1,6 +1,8 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Optional
+from uuid import UUID
 
 
 @dataclass
-class Entity():
-    id: str
+class Entity:
+    id: Optional[UUID] = field(init=False, default=None)
