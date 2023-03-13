@@ -28,6 +28,6 @@ def game_state_mapping(mapper_registry):
         entities.GameState,
         table,
         properties={
-            'game': relationship(entities.Game),
+            'game': relationship(entities.Game, lazy='joined'),
         }
     )

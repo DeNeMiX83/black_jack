@@ -84,9 +84,14 @@ async def gathering_players(update: Update, bot: TgBot):
 
     await set_states(update, bot)
 
+    await bot.seng_update(update)
+
 
 async def timer_waiting_moves(update: Update, bot: TgBot, game_id: UUID):
-    chat_id = update.message.chat.id
+    if update.callback_query is not None:
+        chat_id = update.callback_query.message.chat.id
+    else:
+        chat_id = update.message.chat.id
 
     inline_keyboard = {
         "inline_keyboard": [
@@ -176,8 +181,6 @@ async def game_start(update: Update, bot: TgBot):
         chat_id=chat_id, text=get_text_list_players(players)
     )
 
-    await bot.seng_update(update)
-
 
 def get_text_list_players(players: list[game_entities.Player]) -> str:
     return "\n".join(
@@ -188,7 +191,10 @@ def get_text_list_players(players: list[game_entities.Player]) -> str:
 async def set_states(
     update: Update, bot: TgBot
 ):
-    chat_id = update.message.chat.id
+    if update.callback_query is not None:
+        chat_id = update.callback_query.message.chat.id
+    else:
+        chat_id = update.message.chat.id
 
     session = await bot.get_session()
 
