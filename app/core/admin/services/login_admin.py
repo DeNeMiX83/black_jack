@@ -2,6 +2,7 @@ from app.core.common.protocols import HasherPasswordService
 from app.core.admin.exceptions import AuthError
 from app.core.admin.protocols import LoginAdminService, AdminGateway
 from app.core.admin import dto
+from app.core.admin import entities
 
 
 class LoginAdminServiceImpl(LoginAdminService):
@@ -13,7 +14,7 @@ class LoginAdminServiceImpl(LoginAdminService):
         self._hasher_password = hashed_password
         self._admin_gateway = admin_gateway
 
-    async def login(self, admin: dto.AdminLogin):
+    async def login(self, admin: dto.AdminLogin) -> entities.Admin:
         admin_entity = await self._admin_gateway.get_by_email(admin.email)
 
         if not admin_entity:
@@ -22,3 +23,5 @@ class LoginAdminServiceImpl(LoginAdminService):
             admin.password, admin_entity.password
         ):
             raise AuthError("invalid password")
+
+        return admin_entity
