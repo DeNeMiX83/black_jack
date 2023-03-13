@@ -26,7 +26,7 @@ class GetCardHandler(Handler):
         rank = choice(cards)
         card = game_entities.Card(rank)
 
-        player = await self._player_gateway.get(player_id, for_update=True)
+        player = await self._player_gateway.get(player_id)
         player_card = game_entities.PlayerCard(
             player=player,
             card=card
@@ -34,6 +34,8 @@ class GetCardHandler(Handler):
 
         await self._player_cards_gateway.create(player_card)
         player.score += card.weight
+
+        await self._player_gateway.update(player)
 
         await self._commiter.commit()
 
