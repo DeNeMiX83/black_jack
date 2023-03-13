@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import TypeVar, Generic
-from app.shared import dto
+from app.common import dto
 
 DtoType = TypeVar('DtoType', bound=dto.BaseDto)
 ReturnType = TypeVar('ReturnType')

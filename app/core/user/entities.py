@@ -6,4 +6,4 @@ from app.core.common.entity import Entity
 class User(Entity):
     tg_id: int
     username: str
-    balance: int = field(init=False, default=0)
+    balance: int = field(default=0)

@@ -1,8 +1,12 @@
 from app.common.dto import BaseDto
-from app.core.chat import dto as chat_dto
-from app.core.game import dto as game_dto
+from uuid import UUID
+from app.core.game import entities as game_entities
 
 
 class GameCreate(BaseDto):
-    chat: chat_dto.ChatCreate
-    players: list[game_dto.PlayerCreate]
+    chat_tg_id: int
+
+
+class GameStateUpdate(BaseDto):
+    game_id: UUID
+    new_state: game_entities.game_states
