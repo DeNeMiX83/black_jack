@@ -1,4 +1,5 @@
 import json
+from uuid import UUID
 from typing import Callable
 from aiohttp.web_exceptions import HTTPException, HTTPUnprocessableEntity
 from aiohttp.web_middlewares import middleware
@@ -25,7 +26,7 @@ def get_admin_from_session(
     session: Session
 ) -> admin_dto.AdminAuth:
     return admin_dto.AdminAuth(
-        id=UUID(session["admin"]["id"]),
+        id=session["admin"]["id"],
         email=session["admin"]["email"]
     )
 
@@ -73,7 +74,8 @@ def setup_middlewares(app: Application):
     app.middlewares.append(
         session_middleware(
             cookie_storage.EncryptedCookieStorage(
-                app.settings.session_key
-            )
-        )
+                app.settings.session_key,
+            ),
+        ),
     )
+

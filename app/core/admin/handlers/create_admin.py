@@ -1,5 +1,6 @@
 from app.core.common.handler import Handler
 from app.core.common.protocols import Commiter, HasherPasswordService
+from app.core.common.exceptions import GatewayException
 from app.core.admin.exceptions import AdminAlreadyExistsException
 from app.core.admin.protocols import AdminGateway
 from app.core.admin import dto
@@ -11,11 +12,11 @@ class CreateAdminHandler(Handler):
         self,
         admin_gateway: AdminGateway,
         hashed_password: HasherPasswordService,
-        commmiter: Commiter,
+        commiter: Commiter,
     ):
         self._admin_gateway = admin_gateway
         self._hasher_password = hashed_password
-        self._commmiter = commmiter
+        self._commiter = commiter
 
     async def execute(self, admin_dto: dto.AdminCreate):
         email = admin_dto.email
@@ -30,5 +31,7 @@ class CreateAdminHandler(Handler):
 
         try:
             await self._admin_gateway.create(admin)
-        except Exception:
+        except GatewayException:
             raise AdminAlreadyExistsException
+
+        await self._commiter.commit()

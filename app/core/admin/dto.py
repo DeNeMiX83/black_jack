@@ -1,5 +1,4 @@
 from app.common.dto import BaseDto
-from uuid import UUID
 
 
 class AdminLogin(BaseDto):
@@ -12,5 +11,5 @@ class AdminCreate(AdminLogin):
 
 
 class AdminAuth(BaseDto):
-    id: UUID
+    id: int
     email: str
