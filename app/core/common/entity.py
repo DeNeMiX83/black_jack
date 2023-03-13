@@ -5,4 +5,4 @@ from uuid import UUID
 
 @dataclass
 class Entity:
-    id: Optional[UUID] = field(default=None)
+    id: Optional[UUID] = field(init=False, default=None)

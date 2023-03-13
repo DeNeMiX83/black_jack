@@ -7,6 +7,10 @@ class AdminLogin(BaseDto):
     password: str
 
 
+class AdminCreate(AdminLogin):
+    ...
+
+
 class AdminAuth(BaseDto):
     id: UUID
     email: str
