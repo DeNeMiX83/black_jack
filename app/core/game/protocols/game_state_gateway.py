@@ -1,8 +1,12 @@
 from typing import Protocol
+from uuid import UUID
 from app.core.game import entities
 
 
 class GameStateGateway(Protocol):
+    async def get_by_game_id(self, game_id: UUID, for_update=False) -> entities.GameState:
+        raise NotImplementedError
+
     async def create(
         self, game_state: entities.GameState
     ) -> None:

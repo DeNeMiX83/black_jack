@@ -1,2 +1,2 @@
-class ChatNotFoundException(Exception):
+class ChatAlredyExistException(Exception):
     pass

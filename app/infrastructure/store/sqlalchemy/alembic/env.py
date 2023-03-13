@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-from app.infrastructure.db.sqlalchemy.models.base import Base
+from app.infrastructure.store.sqlalchemy.models.base import Base
 from app.settings import PostgresSettings
 
 postgres_settings = PostgresSettings()

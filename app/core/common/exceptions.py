@@ -1,0 +1,2 @@
+class GatewayException(Exception):
+    pass

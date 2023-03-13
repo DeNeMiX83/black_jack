@@ -7,14 +7,18 @@ from app.core.game import entities as game_entity
 
 class PlayerStatus(Enum):
     PLAYING = 1
-    WIN = 2
-    LOSE = 3
+    BET = 2
+    MOTION = 3
+    SKIP = 4
+    LOSE = 5
+    WIN = 6
+    DRAW = 7
 
 
 @dataclass
 class Player(Entity):
     game: game_entity.Game
     user: user_entity.User
-    status: PlayerStatus = field(init=False, default=PlayerStatus.PLAYING)
-    score: int = field(init=False, default=0)
-    bet: int = field(init=False, default=0)
+    status: PlayerStatus = field(default=PlayerStatus.PLAYING)
+    score: int = field(default=0)
+    bet: int = field(default=0)

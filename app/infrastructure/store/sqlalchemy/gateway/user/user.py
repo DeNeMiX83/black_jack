@@ -6,7 +6,7 @@ from app.core.user import entities
 
 class UserGatewayImpl(BaseGateway, UserGateway):
     async def create(self, user: entities.User) -> None:
-        self.session.add(user)
+        self._session.add(user)
 
     async def get(self, user_id: int) -> entities.User:
         stmt = select(entities.User).where(entities.User.id == user_id)
