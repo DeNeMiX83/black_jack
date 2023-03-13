@@ -12,9 +12,9 @@ class HandlerUpdates:
 
     async def handle_updates(self, updates: list[Update]):
         for update in updates:
-            await self._handle_update(update)
+            await self.handle_update(update)
 
-    async def _handle_update(self, update: Update):
+    async def handle_update(self, update: Update):
         game_states_storage = await self._bot._di.resolve(GameStatesStorage)
         player_states_storage = await self._bot._di.resolve(PlayerStatesStorage)
 
