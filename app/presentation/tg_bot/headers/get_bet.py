@@ -37,16 +37,21 @@ async def _get_bet(update: Update, session: AsyncSession, bot: TgBot):
 
     bet = update.message.text  # type: ignore
 
-    if not bet.isdigit():
+    try:
+        bet = int(bet)
+    except ValueError:
         await bot.send_message(chat_id=chat_id, text="Должны быть цифры")
         return
-
-    bet = int(bet)
 
     int_32 = 2**31
     if bet >= int_32:
         await bot.send_message(
             chat_id=chat_id, text=f"Число должно быть меньше {int_32}"
+        )
+        return
+    if bet <= 0:
+        await bot.send_message(
+            chat_id=chat_id, text='Число должно быть больше 0'
         )
         return
 
@@ -55,7 +60,13 @@ async def _get_bet(update: Update, session: AsyncSession, bot: TgBot):
 
     bet_dto = game_dto.Bet(player_id=player_id, bet=bet)
 
-    await update_player_bet_handler.execute(bet_dto)
+    try:
+        await update_player_bet_handler.execute(bet_dto)
+    except ValueError:
+        await bot.send_message(
+            chat_id=chat_id, text='Некорректная сумма ставки'
+        )
+        return
 
     new_state = game_dto.PlayerStateUpdate(
         player_id=player_id, new_state=game_entities.player_status.PLAYING
@@ -167,7 +178,7 @@ async def timer_waiting_moves(update: Update, bot: TgBot):
             text=f"@{player.user.username} введите ставку\n" +
                  f"Баланс: {player.user.balance}"
         )
-        await asyncio.sleep(10)
+        await asyncio.sleep(15)
 
         session = await bot.get_session()
         get_player_handler = get_player(session)

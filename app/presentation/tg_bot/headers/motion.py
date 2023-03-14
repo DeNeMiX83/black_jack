@@ -50,7 +50,7 @@ async def _get_card(update: Update, session: AsyncSession, bot: TgBot):
 
     await bot.send_message(
         chat_id=chat_id,
-        text=f"@{player.user.username} вытянул карту {card.rank}.\n"
+        text=f"@{player.user.username} вытянул карту {card.rank}{card.suit}.\n"
         + f"Cчет: {player.score}",
     )
 
