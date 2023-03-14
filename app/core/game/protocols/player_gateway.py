@@ -7,7 +7,14 @@ class PlayerGateway(Protocol):
     async def get(self, player_id: UUID) -> entities.Player:
         raise NotImplementedError
 
-    async def get_players_by_game_id(self, game_id: UUID) -> list[entities.Player]:
+    async def get_players_by_user_tg_id(
+        self, user_tg_id: int
+    ) -> list[entities.Player]:
+        raise NotImplementedError
+
+    async def get_players_by_game_id(
+        self, game_id: UUID
+    ) -> list[entities.Player]:
         raise NotImplementedError
 
     async def create(self, player: entities.Player) -> None:

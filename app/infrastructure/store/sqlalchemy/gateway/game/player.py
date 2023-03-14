@@ -5,6 +5,7 @@ from app.infrastructure.store.sqlalchemy.gateway import BaseGateway
 from app.core.common.exceptions import GatewayException
 from app.core.game.protocols import PlayerGateway
 from app.core.game import entities
+from app.core.user import entities as user_entities
 
 
 class PlayerGatewayImpl(BaseGateway, PlayerGateway):
@@ -12,6 +13,13 @@ class PlayerGatewayImpl(BaseGateway, PlayerGateway):
         stmt = select(entities.Player).where(entities.Player.id == player_id)
         result = await self._session.execute(stmt)
         return result.scalars().first()
+
+    async def get_players_by_user_tg_id(self, user_tg_id: int):
+        stmt = select(entities.Player).join(user_entities.User).where(
+            user_entities.User.tg_id == user_tg_id
+        )
+        result = await self._session.execute(stmt)
+        return result.scalars().all()
 
     async def get_players_by_game_id(self, game_id: UUID) -> list[entities.Player]:
         stmt = select(entities.Player).where(
