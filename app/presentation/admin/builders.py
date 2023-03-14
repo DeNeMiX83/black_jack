@@ -3,6 +3,7 @@ from app.settings import Settings
 from app.infrastructure.store.sqlalchemy.gateway import (
     CommiterImp,
     AdminGatewayImpl,
+    PlayerGatewayImpl
 )
 from app.core.common.services import HasherPasswordServiceImp
 from app.core.admin.services import (
@@ -11,7 +12,10 @@ from app.core.admin.services import (
 from app.core.admin.handlers import (
     LoginAdminHandler,
     GetAdminByEmailHandler,
-    CreateAdminHandler,
+    CreateAdminHandler
+)
+from app.core.game.handlers import (
+    GetUserStatsOnGamesByTgIdHandler
 )
 
 
@@ -45,3 +49,10 @@ def create_admin_header_build(
     hasher_password_service = HasherPasswordServiceImp(settings)
     commiter = CommiterImp(session)
     return CreateAdminHandler(admin_gateway, hasher_password_service, commiter)
+
+
+def get_user_stats_on_games_by_tg_id_handler_build(
+    session: AsyncSession,
+) -> GetUserStatsOnGamesByTgIdHandler:
+    player_gateway = PlayerGatewayImpl(session)
+    return GetUserStatsOnGamesByTgIdHandler(player_gateway)

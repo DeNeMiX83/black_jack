@@ -48,7 +48,7 @@ async def admin_login(request: Request) -> Response:
 
 @docs(tags=['admin'])  # type: ignore
 @response_schema(AdminResponseSchema())  # type: ignore
-@router.get("/admin.current")
+@router.get("/admin.current", allow_head=False)
 async def get_current_admin(request: Request) -> Response:
     session = await request.app.get_session()
     get_admin_by_email_header = get_admin_by_email_header_build(session)
