@@ -5,6 +5,7 @@ from app.core.common.entity import Entity
 @dataclass
 class Card(Entity):
     rank: str
+    suit: str
     weight: int = field(init=False)
 
     def __post_init__(self):
