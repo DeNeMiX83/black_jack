@@ -1,6 +1,3 @@
-include deploy/.env.dev
-export $(shell sed 's/=.*//' deploy/.env.dev)
-
 DOCKER_COMPOSE := deploy/dev.docker-compose.yml
 DOCKER_ENV := deploy/.env.dev
 

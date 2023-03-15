@@ -17,10 +17,7 @@ services:
   migrations:
     container_name: ${PROJECT_NAME}_migrations
     image: ${BASE_IMAGE}
-    build:
-      context: ../
-      dockerfile: deploy/Dockerfile
-    command: ["make", "ENV=prod", "migrate-up"]
+    command: ["make", "migrate-up"]
     env_file:
       - .env
     depends_on:
@@ -47,10 +44,7 @@ services:
   tg_bot:
     container_name: ${PROJECT_NAME}_tg_bot
     image: ${BASE_IMAGE}
-    build:
-      context: ../
-      dockerfile: deploy/Dockerfile
-    command: ["make", "ENV=prod", "run-tg-bot"]
+    command: ["make", "run-tg-bot"]
     env_file:
       - .env
     depends_on:
@@ -63,10 +57,7 @@ services:
   admin_api:
     container_name: ${PROJECT_NAME}_admin_api
     image: ${BASE_IMAGE}
-    build:
-      context: ../
-      dockerfile: deploy/Dockerfile
-    command: ["make", "ENV=prod", "run-admin-api"]
+    command: ["make", "run-admin-api"]
     env_file:
       - .env
     ports:
@@ -80,10 +71,7 @@ services:
   rabbitmq:
     container_name: ${PROJECT_NAME}_rabbitmq
     image: ${BASE_IMAGE}
-    build:
-      context: ../
-      dockerfile: deploy/Dockerfile
-    command: ["make", "ENV=prod", "run-rabbitmq"]
+    command: ["make", "run-rabbitmq"]
     env_file:
       - .env
     depends_on:

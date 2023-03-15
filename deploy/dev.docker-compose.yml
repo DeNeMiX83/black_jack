@@ -19,7 +19,7 @@ services:
     build:
       context: ../
       dockerfile: deploy/Dockerfile
-    command: ["make", "ENV=dev", "migrate-up"]
+    command: ["make", "migrate-up"]
     env_file:
       - .env.dev
     depends_on:
@@ -48,7 +48,7 @@ services:
     build:
       context: ../
       dockerfile: deploy/Dockerfile
-    command: ["make", "ENV=dev", "run-tg-bot"]
+    command: ["make", "run-tg-bot"]
     env_file:
       - .env.dev
     depends_on:
@@ -63,7 +63,7 @@ services:
     build:
       context: ../
       dockerfile: deploy/Dockerfile
-    command: ["make", "ENV=dev", "run-admin-api"]
+    command: ["make", "run-admin-api"]
     env_file:
       - .env.dev
     ports:
@@ -79,7 +79,7 @@ services:
     build:
       context: ../
       dockerfile: deploy/Dockerfile
-    command: ["make", "ENV=dev", "run-rabbitmq"]
+    command: ["make", "run-rabbitmq"]
     env_file:
       - .env.dev
     depends_on:
