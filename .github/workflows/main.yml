@@ -50,10 +50,13 @@ jobs:
     steps:
       - name: SSH to server and deploy
         uses: appleboy/ssh-action@master
+        env:
+          ENV: "prod"
         with:
           username: ${{ secrets.SERVER_USER }}
           host: ${{ secrets.SERVER_IP }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_SSH_PORT }}
+          envs: ENV
           script: |
             sh prestart.sh
