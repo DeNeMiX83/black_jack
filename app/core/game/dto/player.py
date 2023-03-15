@@ -18,6 +18,16 @@ class PlayerResult(PlayerStateUpdate):
     winning: int
 
 
+class PlayerStats(BaseDto):
+    state: game_entities.player_status
+    score: int
+    bet: int
+
+
+class UserStats(BaseDto):
+    games_results: list[PlayerStats]
+
+
 class Bet(BaseDto):
     player_id: UUID
     bet: int

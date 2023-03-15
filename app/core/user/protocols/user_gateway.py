@@ -1,9 +1,10 @@
 from typing import Protocol
+from uuid import UUID
 from app.core.user import entities
 
 
 class UserGateway(Protocol):
-    async def get(self, user_id: int) -> entities.User:
+    async def get(self, user_id: UUID) -> entities.User:
         raise NotImplementedError
 
     async def get_by_tg_id(self, tg_id: int) -> entities.User:

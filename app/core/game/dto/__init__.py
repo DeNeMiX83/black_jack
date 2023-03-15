@@ -1,2 +1,4 @@
 from .game import GameCreate, GameStateUpdate # noqa
-from .player import PlayerCreate, PlayerStateUpdate, PlayerResult, Bet # noqa
+from .player import ( # noqa
+    PlayerCreate, PlayerStateUpdate, PlayerResult, Bet, UserStats, PlayerStats
+)

@@ -11,7 +11,7 @@ class RegisterHandler(Handler):
         self._commiter = commiter
 
     async def execute(self, user_dto: dto.UserRegister) -> None:
-        user = entities.entities.User(
+        user = entities.User(
             **user_dto.dict(exclude_unset=True)
         )
         await self._user_gateway.create(user)
