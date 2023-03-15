@@ -14,6 +14,17 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     restart: on-failure
 
+  migrations:
+    image: ${BASE_IMAGE}
+    build:
+      context: ../
+      dockerfile: deploy/Dockerfile
+    command: ["make", "migrate-up"]
+    env_file:
+      - .env
+    depends_on:
+      - db
+
   rabbitmq-image:
     container_name: ${PROJECT_NAME}_rabbitmq_image
     image: rabbitmq:3.11.10-management
