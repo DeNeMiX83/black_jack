@@ -12,7 +12,19 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
-    restart: always
+    restart: on-failure
+
+  migrations:
+    container_name: ${PROJECT_NAME}_migrations
+    image: ${BASE_IMAGE}
+    build:
+      context: ../
+      dockerfile: deploy/Dockerfile
+    command: ["make", "ENV=prod", "migrate-up"]
+    env_file:
+      - .env
+    depends_on:
+      - db
 
   rabbitmq-image:
     container_name: ${PROJECT_NAME}_rabbitmq_image
@@ -26,35 +38,58 @@ services:
     volumes:
       - ${PROJECT_NAME}_rabbitmq_data:/var/lib/rabbitmq
     restart: always
+    healthcheck:
+        test: ["CMD", "rabbitmqctl", "status"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
 
   tg_bot:
     container_name: ${PROJECT_NAME}_tg_bot
+    image: ${BASE_IMAGE}
     build:
       context: ../
-      dockerfile: deploy/tg_bot.Dockerfile
+      dockerfile: deploy/Dockerfile
+    command: ["make", "ENV=prod", "run-tg-bot"]
+    env_file:
+      - .env
     depends_on:
-      - db
-    restart: on-failure
+      migrations:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    
   
   admin_api:
     container_name: ${PROJECT_NAME}_admin_api
+    image: ${BASE_IMAGE}
     build:
       context: ../
-      dockerfile: deploy/admin_api.Dockerfile
+      dockerfile: deploy/Dockerfile
+    command: ["make", "ENV=prod", "run-admin-api"]
+    env_file:
+      - .env
     ports:
       - ${ADMIN_API_HOST_PORT}:${ADMIN_API_PORT}
     depends_on:
-      - db
-      - tg_bot
-    restart: on-failure
+      migrations:
+        condition: service_started 
+      tg_bot:
+        condition: service_started
 
   rabbitmq:
     container_name: ${PROJECT_NAME}_rabbitmq
+    image: ${BASE_IMAGE}
     build:
       context: ../
-      dockerfile: deploy/rabbitmq.Dockerfile
+      dockerfile: deploy/Dockerfile
+    command: ["make", "ENV=prod", "run-rabbitmq"]
+    env_file:
+      - .env
     depends_on:
-      - rabbitmq-image
+      rabbitmq-image:
+        condition: service_healthy
+
     restart: on-failure
   
 volumes:
