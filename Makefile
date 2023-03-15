@@ -1,3 +1,7 @@
+include ./deploy/.env
+export $(shell sed 's/=.*//' ./deploy/.env)
+
+
 DOCKER_COMPOSE := ./deploy/docker-compose.yml
 DOCKER_ENV := ./deploy/.env
 
@@ -32,3 +36,8 @@ compose-pull:
 .PHONY: compose-down
 compose-down:
 	docker-compose -f $(DOCKER_COMPOSE) --env-file $(DOCKER_ENV) down
+
+
+.PHONY: compose-logs
+compose-logs:
+	docker-compose -f $(DOCKER_COMPOSE) --env-file $(DOCKER_ENV) logs -f
