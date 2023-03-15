@@ -37,7 +37,7 @@ services:
     image: ${BASE_IMAGE}
     build:
       context: ../
-      dockerfile: deploy/tg_bot.Dockerfile
+      dockerfile: deploy/Dockerfile
     command: ["make", "migrate-up", "&&", "make", "run-tg-bot"]
     env_file:
       - .env
@@ -52,7 +52,7 @@ services:
     image: ${BASE_IMAGE}
     build:
       context: ../
-      dockerfile: deploy/admin_api.Dockerfile
+      dockerfile: deploy/Dockerfile
     command: ["make", "migrate-up", "&&", "make", "run-admin-api"]
     env_file:
       - .env
@@ -68,7 +68,7 @@ services:
     image: ${BASE_IMAGE}
     build:
       context: ../
-      dockerfile: deploy/rabbitmq.Dockerfile
+      dockerfile: deploy/Dockerfile
     command: ["make", "migrate-up", "&&", "make", "run-rabbitmq"]
     env_file:
       - .env
