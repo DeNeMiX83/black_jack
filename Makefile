@@ -1,17 +1,17 @@
-include deploy/.env
+include ./deploy/.env
 export $(shell sed 's/=.*//' ./deploy/.env)
 
 DOCKER_COMPOSE := ./deploy/prod.docker-compose.yml
 DOCKER_ENV := ./deploy/.env
 
 compose-build:
-	docker compose -f $(DOCKER_COMPOSE) --env-file ${DOCKER_ENV} build
+	docker compose -f $(DOCKER_COMPOSE) --env-file $(DOCKER_ENV) build
 
 compose-up:
-	docker compose -f $(DOCKER_COMPOSE) --env-file ${DOCKER_ENV} up
+	docker compose -f $(DOCKER_COMPOSE) --env-file $(DOCKER_ENV) up
 
 compose-pull:
-	docker-compose -f $(DOCKER_COMPOSE) --env-file ${DOCKER_ENV} pull
+	docker-compose -f $(DOCKER_COMPOSE) --env-file $(DOCKER_ENV) pull
 
 run-tg-bot:
 	poetry run python -m app.presentation.tg_bot.main
