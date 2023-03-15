@@ -1,7 +1,7 @@
 include ./deploy/.env
 export $(shell sed 's/=.*//' ./deploy/.env)
 
-DOCKER_COMPOSE := ./deploy/prod.docker-compose.yml
+DOCKER_COMPOSE := ./deploy/docker-compose.yml
 DOCKER_ENV := ./deploy/.env
 
 compose-build:
