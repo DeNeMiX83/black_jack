@@ -154,5 +154,4 @@ cython_debug/
 
 /.vscode
 my_log_file.log
-deploy/dev.docker-compose.yml
-deploy/.env.dev
+/deploy/.env.dev

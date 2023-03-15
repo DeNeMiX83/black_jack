@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: ${PROJECT_NAME}_database
+    image: postgres:14
+    volumes:
+      - ${PROJECT_NAME}_database_data:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_HOST_PORT}:${POSTGRES_PORT}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    restart: on-failure
+
+  migrations:
+    container_name: ${PROJECT_NAME}_migrations
+    build:
+      context: ../
+      dockerfile: deploy/Dockerfile
+    command: ["make", "ENV=dev", "migrate-up"]
+    env_file:
+      - .env.dev
+    depends_on:
+      - db
+
+  rabbitmq-image:
+    container_name: ${PROJECT_NAME}_rabbitmq_image
+    image: rabbitmq:3.11.10-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD}
+    ports:
+      - ${RABBIT_HOST_PORT}:${RABBIT_PORT}
+      - ${RABBIT_MANAGE_HOST_PORT}:${RABBIT_MANAGE_PORT}
+    volumes:
+      - ${PROJECT_NAME}_rabbitmq_data:/var/lib/rabbitmq
+    restart: always
+    healthcheck:
+        test: ["CMD", "rabbitmqctl", "status"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+
+  tg_bot:
+    container_name: ${PROJECT_NAME}_tg_bot
+    build:
+      context: ../
+      dockerfile: deploy/Dockerfile
+    command: ["make", "ENV=dev", "run-tg-bot"]
+    env_file:
+      - .env.dev
+    depends_on:
+      migrations:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    
+  
+  admin_api:
+    container_name: ${PROJECT_NAME}_admin_api
+    build:
+      context: ../
+      dockerfile: deploy/Dockerfile
+    command: ["make", "ENV=dev", "run-admin-api"]
+    env_file:
+      - .env.dev
+    ports:
+      - ${ADMIN_API_HOST_PORT}:${ADMIN_API_PORT}
+    depends_on:
+      migrations:
+        condition: service_started 
+      tg_bot:
+        condition: service_started
+
+  rabbitmq:
+    container_name: ${PROJECT_NAME}_rabbitmq
+    build:
+      context: ../
+      dockerfile: deploy/Dockerfile
+    command: ["make", "ENV=dev", "run-rabbitmq"]
+    env_file:
+      - .env.dev
+    depends_on:
+      rabbitmq-image:
+        condition: service_healthy
+
+    restart: on-failure
+  
+volumes:
+ black_jack_database_data:
+ black_jack_rabbitmq_data:
