@@ -15,11 +15,12 @@ services:
     restart: on-failure
 
   migrations:
+    container_name: ${PROJECT_NAME}_migrations
     image: ${BASE_IMAGE}
     build:
       context: ../
       dockerfile: deploy/Dockerfile
-    command: ["make", "migrate-up"]
+    command: ["make", "ENV=prod", "migrate-up"]
     env_file:
       - .env
     depends_on:
@@ -49,13 +50,14 @@ services:
     build:
       context: ../
       dockerfile: deploy/Dockerfile
-    command: ["make", "migrate-up", "&&", "make", "run-tg-bot"]
+    command: ["make", "ENV=prod", "run-tg-bot"]
     env_file:
       - .env
     depends_on:
-      - db
-      - rabbitmq
-    restart: on-failure
+      migrations:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
     
   
   admin_api:
@@ -64,15 +66,16 @@ services:
     build:
       context: ../
       dockerfile: deploy/Dockerfile
-    command: ["make", "migrate-up", "&&", "make", "run-admin-api"]
+    command: ["make", "ENV=prod", "run-admin-api"]
     env_file:
       - .env
     ports:
       - ${ADMIN_API_HOST_PORT}:${ADMIN_API_PORT}
     depends_on:
-      - db
-      - tg_bot
-    restart: on-failure
+      migrations:
+        condition: service_started 
+      tg_bot:
+        condition: service_started
 
   rabbitmq:
     container_name: ${PROJECT_NAME}_rabbitmq
@@ -80,7 +83,7 @@ services:
     build:
       context: ../
       dockerfile: deploy/Dockerfile
-    command: ["make", "migrate-up", "&&", "make", "run-rabbitmq"]
+    command: ["make", "ENV=prod", "run-rabbitmq"]
     env_file:
       - .env
     depends_on:
