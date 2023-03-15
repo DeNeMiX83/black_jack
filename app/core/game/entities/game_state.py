@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
 from typing import Optional
+from dataclasses import dataclass, field
 from app.core.common.entity import Entity
 from enum import Enum
 from app.core.game import entities as game_entities

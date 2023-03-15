@@ -1,4 +1,5 @@
 import json
+from uuid import UUID
 from typing import Callable
 from aiohttp.web_exceptions import HTTPException, HTTPUnprocessableEntity
 from aiohttp.web_middlewares import middleware
@@ -25,7 +26,7 @@ def get_admin_from_session(
     session: Session
 ) -> admin_dto.AdminAuth:
     return admin_dto.AdminAuth(
-        id=UUID(session["admin"]["id"]),
+        id=session["admin"]["id"],
         email=session["admin"]["email"]
     )
 
@@ -51,7 +52,7 @@ async def error_handling_middleware(request: Request, handler: Callable):
             http_status=400,
             status="bad_request",
             message=e.reason,
-            data=json.loads(e.text),
+            data=json.loads(e.text),  # type: ignore
         )
     except HTTPException as e:
         return error_json_response(
@@ -67,13 +68,14 @@ async def error_handling_middleware(request: Request, handler: Callable):
 
 
 def setup_middlewares(app: Application):
-    app.middlewares.append(error_handling_middleware)
+    app.middlewares.append(error_handling_middleware)  # type: ignore
     app.middlewares.append(validation_middleware)
-    app.middlewares.append(auth_middleware)
+    app.middlewares.append(auth_middleware)  # type: ignore
     app.middlewares.append(
         session_middleware(
             cookie_storage.EncryptedCookieStorage(
-                app.settings.secret_key
-            )
-        )
+                app.settings.session_key,
+            ),
+        ),
     )
+
