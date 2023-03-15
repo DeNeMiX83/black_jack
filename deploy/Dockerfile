@@ -1,5 +1,5 @@
 FROM python:3.11.0
-WORKDIR /usr/src/${PROJECT_NAME}_rabbitmq
+WORKDIR /usr/src/${PROJECT_NAME}
 
 ENV PYTHONDONTWRITEBYTECODE 1 \
     PYTHONUNBUFFERED 1 \
@@ -15,4 +15,3 @@ RUN poetry install --without dev --no-root
 COPY app ./app
 COPY deploy ./deploy
 COPY Makefile ./
-CMD make run-rabbitmq
