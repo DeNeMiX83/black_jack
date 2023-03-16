@@ -16,10 +16,12 @@ services:
 
   migrations:
     container_name: ${PROJECT_NAME}_migrations
-    image: ${BASE_IMAGE}
+    build:
+      context: ../
+      dockerfile: deploy/Dockerfile
     command: ["make", "migrate-up"]
     env_file:
-      - .env
+      - .env.dev
     depends_on:
       - db
 
@@ -43,10 +45,12 @@ services:
 
   tg_bot:
     container_name: ${PROJECT_NAME}_tg_bot
-    image: ${BASE_IMAGE}
+    build:
+      context: ../
+      dockerfile: deploy/Dockerfile
     command: ["make", "run-tg-bot"]
     env_file:
-      - .env
+      - .env.dev
     depends_on:
       migrations:
         condition: service_started
@@ -56,10 +60,12 @@ services:
   
   admin_api:
     container_name: ${PROJECT_NAME}_admin_api
-    image: ${BASE_IMAGE}
+    build:
+      context: ../
+      dockerfile: deploy/Dockerfile
     command: ["make", "run-admin-api"]
     env_file:
-      - .env
+      - .env.dev
     ports:
       - ${ADMIN_API_HOST_PORT}:${ADMIN_API_PORT}
     depends_on:
@@ -70,10 +76,12 @@ services:
 
   rabbitmq:
     container_name: ${PROJECT_NAME}_rabbitmq
-    image: ${BASE_IMAGE}
+    build:
+      context: ../
+      dockerfile: deploy/Dockerfile
     command: ["make", "run-rabbitmq"]
     env_file:
-      - .env
+      - .env.dev
     depends_on:
       rabbitmq-image:
         condition: service_healthy
