@@ -16,6 +16,8 @@ class GameStateFilter(Filter):
 
         if update.game_state_data is None:
             return False
+        if update.game_state_data.state == GameState.STOP:
+            return False
         if update.game_state_data.state != self._state:
             return False
 

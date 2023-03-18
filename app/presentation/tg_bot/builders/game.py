@@ -95,7 +95,7 @@ def get_player(
     return GetPlayerHandler(player_gateway)
 
 
-def game_over(
+def game_over_handler_build(
     session: AsyncSession,
 ) -> GameOverHandler:
     game_gateway = GameGatewayImpl(session)

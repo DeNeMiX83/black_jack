@@ -5,7 +5,7 @@ from app.infrastructure.tg_api import TgBot
 from app.infrastructure.tg_api.dto import Update
 from app.presentation.tg_bot.builders import (
     update_game_state,
-    game_over,
+    game_over_handler_build,
 )
 from app.infrastructure.tg_api.states import (
     GameState,
@@ -25,7 +25,7 @@ async def start_procces_game_over(
     session = await bot.get_session()
     game_states_storage = await bot.get_game_states_storage()
     update_game_state_handler = update_game_state(session)
-    game_over_handler = game_over(session)
+    game_over_handler = game_over_handler_build(session)
 
     game_data = update.game_state_data
     game_id = game_data.game_id
@@ -43,7 +43,7 @@ async def start_procces_game_over(
 
     await game_states_storage.add_state(
         GameStateKey(chat_id=chat_id),
-        GameStateData(state=GameState.MOTION, game_id=game_id),
+        GameStateData(state=GameState.STOP, game_id=game_id),
     )
 
     logger.info(f"{chat_id}: Состояние игры изменилось " +

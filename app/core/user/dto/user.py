@@ -1,7 +1,7 @@
-from app.common.dto import BaseDto
+from pydantic import BaseModel
 
 
-class UserRegister(BaseDto):
+class UserRegister(BaseModel):
     telegram_id: int
     username: str
     balance: int = 0
