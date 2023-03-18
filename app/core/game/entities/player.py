@@ -6,7 +6,7 @@ from app.core.game import entities as game_entity
 
 
 class PlayerStatus(Enum):
-    PLAYING = 1
+    WAIT = 1
     BET = 2
     MOTION = 3
     SKIP = 4
@@ -19,6 +19,6 @@ class PlayerStatus(Enum):
 class Player(Entity):
     game: game_entity.Game
     user: user_entity.User
-    status: PlayerStatus = field(default=PlayerStatus.PLAYING)
+    status: PlayerStatus = field(default=PlayerStatus.WAIT)
     score: int = field(default=0)
     bet: int = field(default=0)

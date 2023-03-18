@@ -1,5 +1,5 @@
 import asyncio
-from app.settings import Settings
+from app.config.settings import Settings
 from .tg_poller import TgPoller
 from .publisher import RabbitMQUpdatePublisher
 from .tg_updates import TgUpdates

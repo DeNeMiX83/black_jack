@@ -23,7 +23,7 @@ class UpdatePlayerBetHandler(Handler):
             raise ValueError
 
         current_game_player.bet = bet.bet
-        current_game_player.status = player_status.PLAYING
+        current_game_player.status = player_status.WAIT
         current_game_player.user.balance -= bet.bet
 
         await self._player_gateway.update(current_game_player)

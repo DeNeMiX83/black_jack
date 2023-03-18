@@ -1,7 +1,7 @@
-from app.common.dto import BaseDto
+from pydantic import BaseModel
 
 
-class AdminLogin(BaseDto):
+class AdminLogin(BaseModel):
     email: str
     password: str
 
@@ -10,6 +10,6 @@ class AdminCreate(AdminLogin):
     ...
 
 
-class AdminAuth(BaseDto):
+class AdminAuth(BaseModel):
     id: int
     email: str

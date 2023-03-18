@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     AsyncSession,
 )
-from app.settings import Settings
+from app.config.settings import Settings
 
 
 async def create_session_factory(settings: Settings):

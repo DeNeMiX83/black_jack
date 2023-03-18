@@ -23,8 +23,8 @@ services:
     depends_on:
       - db
 
-  rabbitmq-image:
-    container_name: ${PROJECT_NAME}_rabbitmq_image
+  rabbitmq:
+    container_name: ${PROJECT_NAME}_rabbitmq
     image: rabbitmq:3.11.10-management
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBIT_USERNAME}
@@ -41,6 +41,16 @@ services:
         timeout: 10s
         retries: 5
 
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+    ports:
+      - ${REDIS_HOST_PORT}:${REDIS_PORT}
+    volumes:
+      - ${PROJECT_NAME}_redis_data:/data
+    command: redis-server --appendonly yes
+
   tg_bot:
     container_name: ${PROJECT_NAME}_tg_bot
     image: ${BASE_IMAGE}
@@ -50,14 +60,16 @@ services:
     depends_on:
       migrations:
         condition: service_started
-      rabbitmq:
+      redis:
+        condition: service_started
+      tg_poller:
         condition: service_started
     
   
-  admin_api:
-    container_name: ${PROJECT_NAME}_admin_api
+  api:
+    container_name: ${PROJECT_NAME}_api
     image: ${BASE_IMAGE}
-    command: ["make", "run-admin-api"]
+    command: ["make", "run-api"]
     env_file:
       - .env
     ports:
@@ -68,14 +80,14 @@ services:
       tg_bot:
         condition: service_started
 
-  rabbitmq:
-    container_name: ${PROJECT_NAME}_rabbitmq
+  tg_poller:
+    container_name: ${PROJECT_NAME}_tg_poller
     image: ${BASE_IMAGE}
-    command: ["make", "run-rabbitmq"]
+    command: ["make", "run-tg-poller"]
     env_file:
       - .env
     depends_on:
-      rabbitmq-image:
+      rabbitmq:
         condition: service_healthy
 
     restart: on-failure
@@ -83,3 +95,4 @@ services:
 volumes:
  black_jack_database_data:
  black_jack_rabbitmq_data:
+ black_jack_redis_data:

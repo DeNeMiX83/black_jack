@@ -1,7 +1,5 @@
-from typing import Any, Callable, AsyncGenerator
-import asyncio
+from typing import Any
 import inspect
-from app.common.logger import logger
 
 
 class Container:

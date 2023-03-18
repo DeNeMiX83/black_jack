@@ -1,18 +1,20 @@
+import logging.config
 from app.di.container import Container
+from app.config.settings import Settings
 from app.infrastructure.tg_api import TgBot
-from app.presentation.tg_bot.states import (
-    GameStatesStorage, PlayerStatesStorage
-)
-from app.presentation.tg_bot import build_di
+
+from app.presentation.tg_bot.builders import build_di
 
 
+settings = Settings()
 container = Container()
-tg_bot = TgBot(container)
-game_states_storage = GameStatesStorage()
-player_states_storage = PlayerStatesStorage()
+tg_bot = TgBot(settings, container)
 
+container.register(Settings, settings)
 container.register(TgBot, tg_bot)
-container.register(GameStatesStorage, game_states_storage)
-container.register(PlayerStatesStorage, player_states_storage)
 
 build_di.build(container)
+
+logging.config.fileConfig(settings.logging_config_path)
+logger = logging.getLogger()
+logger.info("Starting")

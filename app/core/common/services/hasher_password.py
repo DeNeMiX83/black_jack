@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
 from app.core.common.protocols import HasherPasswordService
-from app.settings import Settings
+from app.config.settings import Settings
 
 
 class HasherPasswordServiceImp(HasherPasswordService):
