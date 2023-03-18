@@ -10,11 +10,8 @@ class UserGateway(Protocol):
     async def get_by_tg_id(self, tg_id: int) -> entities.User:
         raise NotImplementedError
 
+    async def get_top_n_users(self, qty: int) -> list[entities.User]:
+        raise NotImplementedError
+
     async def create(self, user: entities.User) -> None:
-        raise NotImplementedError
-
-    async def update(self, user: entities.User) -> None:
-        raise NotImplementedError
-
-    async def delete(self, user: entities.User) -> None:
         raise NotImplementedError

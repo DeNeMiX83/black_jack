@@ -81,8 +81,6 @@ async def gathering_players(update: Update, bot: TgBot):
 
     await game_start(update, bot)
 
-    await set_states(update, bot)
-
     await bot.seng_update(update)
 
 
@@ -170,11 +168,7 @@ async def game_start(update: Update, bot: TgBot):
         chat_id=chat_id, text=get_text_list_players(players)
     )
 
-
-def get_text_list_players(players: list[game_entities.Player]) -> str:
-    return "\n".join(
-        f"{n + 1}. @{player.user.username}" for n, player in enumerate(players)
-    )
+    await set_states(update, bot)
 
 
 async def set_states(
@@ -208,4 +202,10 @@ async def set_states(
 
     logger.info(
         f"{chat_id}: Состояние игры изменилось на {GameState.PRE_BET}"
+    )
+
+
+def get_text_list_players(players: list[game_entities.Player]) -> str:
+    return "\n".join(
+        f"{n + 1}. @{player.user.username}" for n, player in enumerate(players)
     )

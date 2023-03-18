@@ -121,10 +121,7 @@ async def bet_transfer_stroke(update: Update, bot: TgBot):
         await bot.send_message(
             chat_id=chat_id, text="Нет участников"
         )
-        await start_procces_game_over(
-            update,
-            bot
-        )
+        await start_procces_game_over(update, bot)
         return
 
     text = "\n".join(
