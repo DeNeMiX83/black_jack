@@ -1,9 +1,9 @@
 from typing import Optional, TYPE_CHECKING
 from aiohttp import ClientSession
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.common.logger import logger
 from app.di.container import Container
-from app.settings import Settings
+from app.config.settings import Settings
+from .states.protocols import GameStatesStorage, PlayerStatesStorage
 from app.infrastructure.tg_api.dto import Update, Message
 from app.infrastructure.tg_api.handler import Handler
 from app.infrastructure.tg_api.filters import (
@@ -14,30 +14,45 @@ if TYPE_CHECKING:
 
 
 class TgBot():
-    def __init__(self, di: Container):
+    def __init__(self, settings: Settings, di: Container):
         self._url: Optional[str] = None
         self._session = ClientSession()
         self._handlers: list[Handler] = []
         self._handler_updates: 'HandlerUpdates'
+        self._game_states_storage: GameStatesStorage
+        self._player_states_storage: PlayerStatesStorage
+        self.settings = settings
         self._di = di
 
     async def start(self):
-        from app.infrastructure.tg_api.updates import Updates
-        from app.infrastructure.tg_api.handler_update import HandlerUpdates
+        from app.infrastructure.tg_api.handler_update import (
+            Updates, HandlerUpdates
+        )
+        self._game_states_storage = await self._di.resolve(
+            GameStatesStorage
+        )
+        self._player_states_storage = await self._di.resolve(
+            PlayerStatesStorage
+        )
 
         self._handler_updates = await self._di.resolve(HandlerUpdates)
-
-        self.settings: Settings = await self._di.resolve(Settings)
         self._url: str = self.settings.tg_api_url_with_token
+
         updates = await self._di.resolve(Updates)
         await updates.start()
 
-    async def get_session(self) -> Container:
+    async def get_session(self) -> AsyncSession:
         session = await self._di.resolve(AsyncSession)
         return session
 
     async def get_handlers(self) -> list[Handler]:
         return self._handlers
+
+    async def get_game_states_storage(self) -> GameStatesStorage:
+        return self._game_states_storage
+
+    async def get_player_states_storage(self) -> PlayerStatesStorage:
+        return self._player_states_storage
 
     async def seng_update(self, update: Update) -> None:
         await self._handler_updates.handle_updates([update])
@@ -65,10 +80,7 @@ class TgBot():
             }
         ) as response:
             response.raise_for_status()
-            data = await response.json()
-            # message = Message(**data['result'])
-            # return message
-    
+
     def message_handler(self, *filters: Filter):
         def decorator(handler_func):
             handler = Handler(handler_func, self._di)

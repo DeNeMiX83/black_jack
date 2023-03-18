@@ -1,7 +1,5 @@
 import inspect
-from app.common.logger import logger
 from typing import Callable
-from sqlalchemy.ext.asyncio import AsyncSession
 from app.di.container import Container
 from app.infrastructure.tg_api.dto import Update
 from app.infrastructure.tg_api.filters import Filter

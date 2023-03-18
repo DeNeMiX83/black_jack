@@ -1,9 +1,9 @@
-from typing import Optional, Any
-from pydantic import Field
-from app.common.dto import BaseDto
+from typing import Optional
+from pydantic import BaseModel, Field
+from .states.dto import GameStateData, PlayerStateData
 
 
-class User(BaseDto):
+class User(BaseModel):
     id: int
     is_bot: bool
     first_name: str
@@ -12,7 +12,7 @@ class User(BaseDto):
     language_code: Optional[str] = None
 
 
-class Chat(BaseDto):
+class Chat(BaseModel):
     id: int
     type: str
     title: Optional[str]
@@ -21,13 +21,13 @@ class Chat(BaseDto):
     last_name: Optional[str]
 
 
-class MessageEntity(BaseDto):
+class MessageEntity(BaseModel):
     type: str
     offset: int
     length: int
 
 
-class Message(BaseDto):
+class Message(BaseModel):
     message_id: int
     from_user: Optional[User] = Field(alias="from")
     date: int
@@ -37,14 +37,14 @@ class Message(BaseDto):
     new_chat_member: Optional[User] = None
 
 
-class CallbackQuery(BaseDto):
+class CallbackQuery(BaseModel):
     id: int
     from_user: Optional[User] = Field(alias="from")
     message: Optional[Message] = None
     data: Optional[str] = None
 
 
-class Update(BaseDto):
+class Update(BaseModel):
     update_id: int
     message: Optional[Message] = None
     edited_message: Optional[Message] = None
@@ -60,5 +60,5 @@ class Update(BaseDto):
     my_chat_member: Optional[dict] = None
     chat_member: Optional[dict] = None
 
-    game_states_storage: Optional[Any] = None
-    player_states_storage: Optional[Any] = None
+    game_state_data: Optional[GameStateData] = None
+    player_state_data: Optional[PlayerStateData] = None
