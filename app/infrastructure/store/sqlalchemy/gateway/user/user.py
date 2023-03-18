@@ -17,3 +17,12 @@ class UserGatewayImpl(BaseGateway, UserGateway):
         stmt = select(entities.User).where(entities.User.tg_id == tg_id)
         result = await self._session.execute(stmt)
         return result.scalars().first()
+
+    async def get_top_n_users(self, qty: int) -> entities.User:
+        stmt = (
+            select(entities.User)
+            .order_by(entities.User.balance.desc())
+            .limit(qty)
+        )
+        result = await self._session.execute(stmt)
+        return result.scalars().fetchall()

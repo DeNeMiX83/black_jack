@@ -1,7 +1,7 @@
-from app.common.dto import BaseDto
+from pydantic import BaseModel
 
 
-class Chat(BaseDto):
+class Chat(BaseModel):
     tg_id: int
     name: str
 

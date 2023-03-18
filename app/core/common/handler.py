@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import TypeVar, Generic
-from app.common import dto
+from pydantic import BaseModel
 
-DtoType = TypeVar('DtoType', bound=dto.BaseDto)
+DtoType = TypeVar('DtoType', bound=BaseModel)
 ReturnType = TypeVar('ReturnType')
 
 

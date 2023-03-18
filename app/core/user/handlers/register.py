@@ -5,7 +5,7 @@ from app.core.user import dto
 from app.core.user import entities
 
 
-class RegisterHandler(Handler):
+class RegisterUserHandler(Handler):
     def __init__(self, user_gateway: UserGateway, commiter: Commiter):
         self._user_gateway = user_gateway
         self._commiter = commiter

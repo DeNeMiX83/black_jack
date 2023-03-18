@@ -6,6 +6,8 @@ ifneq ($(ENV),)
 	DOCKER_COMPOSE := deploy/dev.docker-compose.yml
 	DOCKER_ENV := deploy/.env.dev
 	DOCKER_COMPOSE_RUNNER := docker compose
+	include deploy/.env.dev
+	export $(shell sed 's/=.*//' deploy/.env.dev)
 endif
 
 
@@ -13,12 +15,12 @@ endif
 run-tg-bot:
 	poetry run python -m app.presentation.tg_bot.main
 	
-.PHONY: run-admin-api
-run-admin-api:
-	poetry run python -m app.presentation.admin.main
+.PHONY: run-api
+run-api:
+	poetry run python -m app.presentation.api.main
 
-.PHONY: run-rabbitmq
-run-rabbitmq:
+.PHONY: run-tg-poller
+run-tg-poller:
 	poetry run python -m app.infrastructure.rabbitmq.main
 
 .PHONY: migrate-create
