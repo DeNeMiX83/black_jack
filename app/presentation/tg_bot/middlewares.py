@@ -51,6 +51,7 @@ class ThrottlingMiddleware(Middleware):
                         chat_id=chat_id,
                         text=f"@{user_name} блокировка на {rate_limit} сек.",
                     )
+                self._storage[key]["last_update_time"] = time.time()
                 self._storage[key]["notify"] = False
                 raise Exception(f"User {user_id} is throttled")
 
