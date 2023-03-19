@@ -37,6 +37,7 @@ class ThrottlingMiddleware(Middleware):
                 "count": 1,
                 "notify": True,
             }
+            return
         else:
             rate_limit = getattr(handler, "rate_limit", 0)
             if rate_limit == 0:
@@ -55,6 +56,4 @@ class ThrottlingMiddleware(Middleware):
                 self._storage[key]["notify"] = False
                 raise Exception(f"User {user_id} is throttled")
 
-        self._storage[key]["last_update_time"] = time.time()
-        self._storage[key]["count"] += 1
-        self._storage[key]["notify"] = True
+        del self._storage[key]

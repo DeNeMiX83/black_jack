@@ -28,7 +28,6 @@ from app.presentation.tg_bot.middlewares import throttling_rate
 logger = logging.getLogger()
 
 
-@throttling_rate(rate_limit=6)
 @tg_bot.message_handler(
     GameStateFilter(GameState.BET),
     PlayerStateFilter(PlayerState.BET),
