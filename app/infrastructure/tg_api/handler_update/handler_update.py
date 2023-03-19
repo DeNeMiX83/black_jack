@@ -21,7 +21,6 @@ class HandlerUpdates:
         else:
             chat_id = update.message.chat.id
             user_id = update.message.from_user.id
-
         game_states_storage = await self._bot.get_game_states_storage()
         player_states_storage = await self._bot.get_player_states_storage()
         game_state_data = await game_states_storage.get_state(

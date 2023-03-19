@@ -13,7 +13,6 @@ class PlayerStateFilter(Filter):
         self,
         update: Update,
     ) -> bool:
-
         if update.player_state_data is None:
             return False
         if update.player_state_data.state != self._state:

@@ -6,8 +6,10 @@ from app.core.chat import dto as chat_dto
 from app.presentation.tg_bot.builders import (
     chat_create,
 )
+from app.presentation.tg_bot.middlewares import throttling_rate
 
 
+@throttling_rate(rate_limit=5)
 @tg_bot.message_handler(CommandFilter("/start"))
 async def add_new_chat(update: Update, bot: TgBot):
     chat_id = update.message.chat.id  # type: ignore

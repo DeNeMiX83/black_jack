@@ -3,7 +3,7 @@ from aiohttp import TCPConnector
 from aiohttp.client import ClientSession
 
 
-class TgPoller():
+class TgPoller:
     def __init__(
         self,
         server_url: str,
@@ -17,15 +17,15 @@ class TgPoller():
 
     async def get_updates(self):
         async with self._session.get(
-            self.server_url + '/getUpdates',
+            self.server_url + "/getUpdates",
             params={
-                'timeout': 30,
-                'offset': self._offset,
-            }
+                "timeout": 30,
+                "offset": self._offset,
+            },
         ) as resp:
             resp.raise_for_status()
 
             data = await resp.json()
-            data = data['result']
-            self._offset = data[-1]['update_id'] + 1
+            data = data["result"]
+            self._offset = data[-1]["update_id"] + 1
             return data

@@ -6,10 +6,10 @@ from app.core.game import entities as game_entities
 
 
 class States(Enum):
-    START = 'start'
-    BET = 'bet'
-    MOTION = 'motion'
-    STOP = 'stop'
+    START = "start"
+    BET = "bet"
+    MOTION = "motion"
+    STOP = "stop"
 
 
 @dataclass

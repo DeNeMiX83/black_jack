@@ -11,7 +11,7 @@ class GetCardHandler(Handler):
         self,
         player_gateway: PlayerGateway,
         player_cards_gateway: PlayerCardsGateway,
-        commiter: Commiter
+        commiter: Commiter,
     ):
         self._player_gateway = player_gateway
         self._player_cards_gateway = player_cards_gateway
@@ -19,21 +19,26 @@ class GetCardHandler(Handler):
 
     async def execute(self, player_id: UUID) -> game_entities.Card:
         rank = (
-            "1", "2", "3", "4", "5",
-            "6", "7", "8", "9", "10",
-            "J", "Q", "K", "A",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "J",
+            "Q",
+            "K",
+            "A",
         )
-        suit = ('♠️', '♣️', '♥️', '♦️')
-        card = game_entities.Card(
-            choice(rank),
-            choice(suit)
-        )
+        suit = ("♠️", "♣️", "♥️", "♦️")
+        card = game_entities.Card(choice(rank), choice(suit))
 
         player = await self._player_gateway.get(player_id)
-        player_card = game_entities.PlayerCard(
-            player=player,
-            card=card
-        )
+        player_card = game_entities.PlayerCard(player=player, card=card)
 
         await self._player_cards_gateway.create(player_card)
         player.score += card.weight

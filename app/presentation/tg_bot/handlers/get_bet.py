@@ -4,12 +4,14 @@ from app.infrastructure.tg_api import TgBot
 from app.infrastructure.tg_api.dto import Update
 from app.presentation.tg_bot.loader import tg_bot
 from app.infrastructure.tg_api.states import (
-    GameState, GameStateKey, GameStateData,
-    PlayerState, PlayerStateKey, PlayerStateData
+    GameState,
+    GameStateKey,
+    GameStateData,
+    PlayerState,
+    PlayerStateKey,
+    PlayerStateData,
 )
-from app.infrastructure.tg_api.filters import (
-    GameStateFilter, PlayerStateFilter
-)
+from app.infrastructure.tg_api.filters import GameStateFilter, PlayerStateFilter
 from app.core.game import dto as game_dto
 from app.core.game import entities as game_entities
 from app.presentation.tg_bot.builders import (
@@ -21,10 +23,12 @@ from app.presentation.tg_bot.builders import (
     delete_player_by_id,
 )
 from app.presentation.tg_bot.handlers.common import start_procces_game_over
+from app.presentation.tg_bot.middlewares import throttling_rate
 
 logger = logging.getLogger()
 
 
+@throttling_rate(rate_limit=6)
 @tg_bot.message_handler(
     GameStateFilter(GameState.BET),
     PlayerStateFilter(PlayerState.BET),
@@ -54,7 +58,7 @@ async def _get_bet(update: Update, bot: TgBot):
         return
     if bet <= 0:
         await bot.send_message(
-            chat_id=chat_id, text='Число должно быть больше 0'
+            chat_id=chat_id, text="Число должно быть больше 0"
         )
         return
 
@@ -67,7 +71,7 @@ async def _get_bet(update: Update, bot: TgBot):
         await update_player_bet_handler.execute(bet_dto)
     except ValueError:
         await bot.send_message(
-            chat_id=chat_id, text='Некорректная сумма ставки'
+            chat_id=chat_id, text="Некорректная сумма ставки"
         )
         return
 
@@ -82,14 +86,12 @@ async def _get_bet(update: Update, bot: TgBot):
 
     logger.info(f"{chat_id}: user {user_id}: сделал ставку: {bet}")
     logger.info(
-        f"{chat_id}: user {user_id}: состояние сменилось " +
-        f"на {PlayerState.WAIT}"
+        f"{chat_id}: user {user_id}: состояние сменилось "
+        + f"на {PlayerState.WAIT}"
     )
 
 
-@tg_bot.common_handler(
-    GameStateFilter(GameState.PRE_BET)
-)
+@tg_bot.common_handler(GameStateFilter(GameState.PRE_BET))
 async def bet_transfer_stroke(update: Update, bot: TgBot):
     if update.callback_query is not None:
         chat_id = update.callback_query.message.chat.id
@@ -118,9 +120,7 @@ async def bet_transfer_stroke(update: Update, bot: TgBot):
     )  # type: ignore
 
     if not players:
-        await bot.send_message(
-            chat_id=chat_id, text="Нет участников"
-        )
+        await bot.send_message(chat_id=chat_id, text="Нет участников")
         await start_procces_game_over(update, bot)
         return
 
@@ -163,12 +163,12 @@ async def timer_waiting_moves(update: Update, bot: TgBot):
         await update_player_state_handler.execute(new_state)
         await player_states_storage.add_state(
             PlayerStateKey(chat_id=chat_id, user_id=player.user.tg_id),
-            PlayerStateData(state=PlayerState.BET, player_id=player.id)
+            PlayerStateData(state=PlayerState.BET, player_id=player.id),
         )
         await bot.send_message(
             chat_id=chat_id,
-            text=f"@{player.user.username} введите ставку\n" +
-                 f"Баланс: {player.user.balance}"
+            text=f"@{player.user.username} введите ставку\n"
+            + f"Баланс: {player.user.balance}",
         )
         await asyncio.sleep(15)
 

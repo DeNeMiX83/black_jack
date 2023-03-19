@@ -3,7 +3,7 @@ from app.config.settings import Settings
 from app.infrastructure.store.sqlalchemy.gateway import (
     CommiterImp,
     AdminGatewayImpl,
-    PlayerGatewayImpl
+    PlayerGatewayImpl,
 )
 from app.core.common.services import HasherPasswordServiceImp
 from app.core.admin.services import (
@@ -12,11 +12,9 @@ from app.core.admin.services import (
 from app.core.admin.handlers import (
     LoginAdminHandler,
     GetAdminByEmailHandler,
-    CreateAdminHandler
+    CreateAdminHandler,
 )
-from app.core.game.handlers import (
-    GetUserStatsOnGamesByTgIdHandler
-)
+from app.core.game.handlers import GetUserStatsOnGamesByTgIdHandler
 
 
 def login_admin_servise_build(

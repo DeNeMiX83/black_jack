@@ -154,4 +154,4 @@ cython_debug/
 
 /.vscode
 my_log_file.log
-/deploy/.env.dev
+/deploy/.env**

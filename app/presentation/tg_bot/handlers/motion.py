@@ -208,7 +208,7 @@ async def save_game_results(update: Update, bot: TgBot):
         chat_id = update.callback_query.message.chat.id
     else:
         chat_id = update.message.chat.id
-    logger.info(f'{chat_id} подсчет результатов')
+    logger.info(f"{chat_id} подсчет результатов")
 
     session = await bot.get_session()
 
@@ -231,31 +231,31 @@ async def save_game_results(update: Update, bot: TgBot):
         if player.status == game_entities.player_status.LOSE:
             text += (
                 f"{n + 1}. @{player.user.username} \t проиграл\n"
-                + f"счет: {player.score}\n"
+                + f"счет: {player.score} баланс: {player.user.balance}\n"
             )
             lose.append(player.id)
         elif dealer_result > 21:
             text += (
                 f"{n + 1}. @{player.user.username} \t выйграл\n"
-                + f"счет: {player.score}\n"
+                + f"счет: {player.score} баланс: {player.user.balance}\n"
             )
             win.append(player.id)
         elif player.score < dealer_result:
             text += (
                 f"{n + 1}. @{player.user.username} \t проиграл\n"
-                + f"счет: {player.score}\n"
+                + f"счет: {player.score} баланс: {player.user.balance}\n"
             )
             lose.append(player.id)
         elif player.score == dealer_result:
             text += (
                 f"{n + 1}. @{player.user.username} \t ничья\n"
-                + f"счет: {player.score}\n"
+                + f"счет: {player.score} баланс: {player.user.balance}\n"
             )
             draw.append(player.id)
         else:
             text += (
                 f"{n + 1}. @{player.user.username} \t выйграл\n"
-                + f"счет: {player.score}\n"
+                + f"счет: {player.score} баланс: {player.user.balance}\n"
             )
             win.append(player.id)
 

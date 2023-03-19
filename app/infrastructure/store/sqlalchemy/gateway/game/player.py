@@ -15,16 +15,18 @@ class PlayerGatewayImpl(BaseGateway, PlayerGateway):
         return result.scalars().first()
 
     async def get_players_by_user_tg_id(self, user_tg_id: int):
-        stmt = select(entities.Player).join(user_entities.User).where(
-            user_entities.User.tg_id == user_tg_id
+        stmt = (
+            select(entities.Player)
+            .join(user_entities.User)
+            .where(user_entities.User.tg_id == user_tg_id)
         )
         result = await self._session.execute(stmt)
         return result.scalars().all()
 
-    async def get_players_by_game_id(self, game_id: UUID) -> list[entities.Player]:
-        stmt = select(entities.Player).where(
-            entities.Player.game_id == game_id
-        )
+    async def get_players_by_game_id(
+        self, game_id: UUID
+    ) -> list[entities.Player]:
+        stmt = select(entities.Player).where(entities.Player.game_id == game_id)
         result = await self._session.execute(stmt)
         return result.scalars().all()
 
@@ -45,7 +47,7 @@ class PlayerGatewayImpl(BaseGateway, PlayerGateway):
                 user_id=player.user.id,
                 status=player.status,
                 score=player.score,
-                bet=player.bet
+                bet=player.bet,
             )
         )
 

@@ -5,8 +5,10 @@ from app.infrastructure.tg_api.filters import CommandFilter
 from app.presentation.tg_bot.builders import (
     get_top_users_handler_build,
 )
+from app.presentation.tg_bot.middlewares import throttling_rate
 
 
+@throttling_rate(rate_limit=5)
 @tg_bot.message_handler(CommandFilter("/top"))
 async def _get_top_users(update: Update, bot: TgBot):
     chat_id = update.message.chat.id  # type: ignore
@@ -18,7 +20,7 @@ async def _get_top_users(update: Update, bot: TgBot):
     users = await get_top_users_handler.execute(10)
 
     await bot.send_message(
-        chat_id=chat_id, text=ans_text + "\n".join(
-            f"@{user.username}: {user.balance}" for user in users
-        )
+        chat_id=chat_id,
+        text=ans_text
+        + "\n".join(f"@{user.username}: {user.balance}" for user in users),
     )

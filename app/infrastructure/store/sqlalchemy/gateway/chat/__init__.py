@@ -1,1 +1,1 @@
-from .chat import ChatGatewayImpl # noqa
+from .chat import ChatGatewayImpl  # noqa

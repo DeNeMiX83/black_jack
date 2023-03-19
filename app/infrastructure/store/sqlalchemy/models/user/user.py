@@ -8,11 +8,9 @@ from app.core.user import entities
 
 
 class User(Base):
-    __tablename__ = 'user'
+    __tablename__ = "user"
 
-    id = Column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     tg_id = Column(BigInteger, nullable=False, unique=True)
     username = Column(String, nullable=False, unique=True)
     balance = Column(Integer, nullable=False, default=0)

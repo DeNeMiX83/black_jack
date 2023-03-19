@@ -1,1 +1,1 @@
-from .admin import AdminGatewayImpl # noqa
+from .admin import AdminGatewayImpl  # noqa

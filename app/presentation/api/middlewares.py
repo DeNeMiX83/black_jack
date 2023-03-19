@@ -5,7 +5,10 @@ from aiohttp.web_exceptions import HTTPException, HTTPUnprocessableEntity
 from aiohttp.web_middlewares import middleware
 from aiohttp_apispec import validation_middleware
 from aiohttp_session import (
-    Session, session_middleware, cookie_storage, get_session
+    Session,
+    session_middleware,
+    cookie_storage,
+    get_session,
 )
 from app.presentation.api.responses import error_json_response
 from app.presentation.api.common import Application, Request
@@ -20,12 +23,9 @@ async def auth_middleware(request: Request, handler: Callable):
     return await handler(request)
 
 
-def get_admin_from_session(
-    session: Session
-) -> admin_dto.AdminAuth:
+def get_admin_from_session(session: Session) -> admin_dto.AdminAuth:
     return admin_dto.AdminAuth(
-        id=session["admin"]["id"],
-        email=session["admin"]["email"]
+        id=session["admin"]["id"], email=session["admin"]["email"]
     )
 
 
@@ -76,4 +76,3 @@ def setup_middlewares(app: Application):
             ),
         ),
     )
-

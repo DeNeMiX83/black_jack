@@ -9,7 +9,7 @@ class LoginAdminServiceImpl(LoginAdminService):
     def __init__(
         self,
         admin_gateway: AdminGateway,
-        hashed_password: HasherPasswordService
+        hashed_password: HasherPasswordService,
     ):
         self._hasher_password = hashed_password
         self._admin_gateway = admin_gateway

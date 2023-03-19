@@ -1,1 +1,1 @@
-from .user import UserGatewayImpl # noqa
+from .user import UserGatewayImpl  # noqa

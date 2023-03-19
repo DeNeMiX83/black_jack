@@ -15,10 +15,8 @@ class UpdatePlayerBetHandler(Handler):
         self._commiter = commiter
 
     async def execute(self, bet: game_dto.Bet) -> None:
-        current_game_player = await self._player_gateway.get(
-            bet.player_id
-        )
-        
+        current_game_player = await self._player_gateway.get(bet.player_id)
+
         if current_game_player.user.balance < bet.bet:
             raise ValueError
 

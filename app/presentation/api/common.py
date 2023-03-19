@@ -11,7 +11,6 @@ from app.core.admin import dto as admin_dto
 
 
 class Application(AiohttpApplication):
-
     def __init__(self, di: Container, settings: Settings, *args, **kwargs):
         self.settings = settings
         self._di = di

@@ -3,7 +3,7 @@ from app.core.game.entities import player_status
 
 
 class UserStatsResponseSchema(Schema):
-    games_results = fields.Nested('PlayerStatsResponseSchema', many=True)
+    games_results = fields.Nested("PlayerStatsResponseSchema", many=True)
 
 
 class PlayerStatsResponseSchema(Schema):

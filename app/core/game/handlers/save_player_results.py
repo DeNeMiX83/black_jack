@@ -17,9 +17,7 @@ class SavePlayerResultsHandler(Handler):
 
     async def execute(self, results: list[dto.PlayerResult]) -> None:
         for result in results:
-            player = await self._player_gateway.get(
-                result.player_id
-            )
+            player = await self._player_gateway.get(result.player_id)
             player.status = result.new_state
             player.user.balance = player.user.balance + result.winning
             await self._player_gateway.update(player)

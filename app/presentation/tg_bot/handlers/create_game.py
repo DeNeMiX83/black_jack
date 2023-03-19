@@ -1,6 +1,8 @@
 import logging
 from app.infrastructure.tg_api.states import (
-    GameState, GameStateKey, GameStateData
+    GameState,
+    GameStateKey,
+    GameStateData,
 )
 from app.infrastructure.tg_api import TgBot
 from app.infrastructure.tg_api.dto import Update
@@ -11,18 +13,15 @@ from app.core.game.exceptions import (
     GameAlreadyExistsException,
 )
 from app.core.game import dto as game_dto
-from app.presentation.tg_bot.builders import (
-    game_create
-)
+from app.presentation.tg_bot.builders import game_create
+from app.presentation.tg_bot.middlewares import throttling_rate
 
 logger = logging.getLogger()
 
 
+@throttling_rate(rate_limit=10)
 @tg_bot.message_handler(CommandFilter("/create_game"))
-async def create_game(
-    update: Update,
-    bot: TgBot
-):
+async def create_game(update: Update, bot: TgBot):
     if update.callback_query is not None:
         chat_id = update.callback_query.message.chat.id
     else:
@@ -33,7 +32,7 @@ async def create_game(
 
     game_states_storage = await bot.get_game_states_storage()
 
-    logger.info(f'{chat_id}: Создание игры')
+    logger.info(f"{chat_id}: Создание игры")
 
     if update.message is None:
         return
@@ -48,17 +47,15 @@ async def create_game(
         )
         return
     except GameAlreadyExistsException:
-        await bot.send_message(
-            chat_id=chat_id, text="Игра уже существует"
-        )
+        await bot.send_message(chat_id=chat_id, text="Игра уже существует")
         return
 
-    logger.info(f'{chat_id}: Игра создана')
+    logger.info(f"{chat_id}: Игра создана")
 
     await game_states_storage.add_state(
         GameStateKey(chat_id=chat_id),
         GameStateData(state=GameState.PRE_START, game_id=game.id),
     )
     update.message.entities = None
-    logger.info(f'{chat_id}: состояние игры стало {GameState.PRE_START}')
+    logger.info(f"{chat_id}: состояние игры стало {GameState.PRE_START}")
     await bot.seng_update(update)

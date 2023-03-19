@@ -12,7 +12,7 @@ class GetGameStateHandler(Handler):
         self._game_state_gateway = game_state_gateway
 
     async def execute(self, game_id: UUID) -> game_entities.GameState:
-        game_state_entity = (
-            await self._game_state_gateway.get_by_game_id(game_id)  # type: ignore
-        )
+        game_state_entity = await self._game_state_gateway.get_by_game_id(
+            game_id
+        )  # type: ignore
         return game_state_entity

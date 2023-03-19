@@ -1,1 +1,1 @@
-from .admin import router as admin_router # noqa
+from .admin import router as admin_router  # noqa
