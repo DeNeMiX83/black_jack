@@ -26,7 +26,7 @@ services:
       - db
 
   rabbitmq:
-    container_name: ${PROJECT_NAME}_rabbitmq_image
+    container_name: ${PROJECT_NAME}_rabbitmq
     image: rabbitmq:3.11.10-management
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBIT_USERNAME}
