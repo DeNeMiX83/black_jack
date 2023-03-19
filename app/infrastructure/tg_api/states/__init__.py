@@ -1,12 +1,11 @@
-from .storage import ( # noqa
+from .storage import (  # noqa
     GameStatesStorageImpl,
     PlayerStatesStorageImpl,
 )
-from .states import ( # noqa
-    GameState,
-    PlayerState
-)
-from .dto import ( # noqa
-    GameStateKey, GameStateData,
-    PlayerStateKey, PlayerStateData
+from .states import GameState, PlayerState  # noqa
+from .dto import (  # noqa
+    GameStateKey,
+    GameStateData,
+    PlayerStateKey,
+    PlayerStateData,
 )

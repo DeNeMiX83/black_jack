@@ -1,2 +1,2 @@
-from .game import GameStateGatewayImp # noqa
-from .player import PlayerStateGatewayImp # noqa
+from .game import GameStateGatewayImp  # noqa
+from .player import PlayerStateGatewayImp  # noqa

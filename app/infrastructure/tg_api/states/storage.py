@@ -1,9 +1,6 @@
 from typing import Optional
 from .protocols import GameStatesStorage, PlayerStatesStorage
-from .dto import (
-    GameStateKey, GameStateData,
-    PlayerStateKey, PlayerStateData
-)
+from .dto import GameStateKey, GameStateData, PlayerStateKey, PlayerStateData
 from .protocols import GameStateGateway, PlayerStateGateway
 
 

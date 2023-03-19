@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.infrastructure.store.sqlalchemy.gateway import (
-    ChatGatewayImpl, CommiterImp
+    ChatGatewayImpl,
+    CommiterImp,
 )
 from app.core.chat.handlers import CreateChatHandler
 

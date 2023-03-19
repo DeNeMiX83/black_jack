@@ -1,1 +1,1 @@
-from .user import UserNotFoundException # noqa
+from .user import UserNotFoundException  # noqa

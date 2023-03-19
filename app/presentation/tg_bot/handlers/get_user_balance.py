@@ -6,8 +6,10 @@ from app.core.user.exceptions import UserNotFoundException
 from app.presentation.tg_bot.builders import (
     get_user_balance_handler_build,
 )
+from app.presentation.tg_bot.middlewares import throttling_rate
 
 
+@throttling_rate(rate_limit=5)
 @tg_bot.message_handler(CommandFilter("/balance"))
 async def _get_user_balance(update: Update, bot: TgBot):
     chat_id = update.message.chat.id  # type: ignore

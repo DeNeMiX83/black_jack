@@ -6,8 +6,7 @@ from app.config.settings import Settings
 class HasherPasswordServiceImp(HasherPasswordService):
     def __init__(self, settings: Settings):
         self._pwd_context = CryptContext(
-            schemes=[settings.password_algorithm],
-            deprecated="auto"
+            schemes=[settings.password_algorithm], deprecated="auto"
         )
 
     def hash(self, password: str) -> str:

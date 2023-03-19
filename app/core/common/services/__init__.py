@@ -1,1 +1,1 @@
-from .hasher_password import HasherPasswordServiceImp # noqa
+from .hasher_password import HasherPasswordServiceImp  # noqa

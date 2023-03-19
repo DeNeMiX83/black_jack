@@ -1,1 +1,1 @@
-from .chat import Chat, chat_mapping # noqa
+from .chat import Chat, chat_mapping  # noqa

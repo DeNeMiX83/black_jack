@@ -1,6 +1,11 @@
 from app.infrastructure.store.sqlalchemy.models import (
-    game_mapping, game_state_mapping, chat_mapping, player_mapping,
-    user_mapping, player_cards_mapping, admin_mapping
+    game_mapping,
+    game_state_mapping,
+    chat_mapping,
+    player_mapping,
+    user_mapping,
+    player_cards_mapping,
+    admin_mapping,
 )
 from app.infrastructure.store.sqlalchemy.models.base import Base
 

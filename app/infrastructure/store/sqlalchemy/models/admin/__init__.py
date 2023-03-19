@@ -1,1 +1,1 @@
-from .admin import Admin, admin_mapping # noqa
+from .admin import Admin, admin_mapping  # noqa

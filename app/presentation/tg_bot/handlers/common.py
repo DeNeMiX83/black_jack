@@ -10,7 +10,7 @@ from app.presentation.tg_bot.builders import (
 from app.infrastructure.tg_api.states import (
     GameState,
     GameStateKey,
-    GameStateData
+    GameStateData,
 )
 
 logger = logging.getLogger()
@@ -46,6 +46,8 @@ async def start_procces_game_over(
         GameStateData(state=GameState.STOP, game_id=game_id),
     )
 
-    logger.info(f"{chat_id}: Состояние игры изменилось " +
-                f"на {new_game_state.new_state}")
+    logger.info(
+        f"{chat_id}: Состояние игры изменилось "
+        + f"на {new_game_state.new_state}"
+    )
     logger.info(f"{chat_id}: Игра завершена")

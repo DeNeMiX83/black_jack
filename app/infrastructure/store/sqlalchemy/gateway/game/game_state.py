@@ -17,10 +17,7 @@ class GameStateGatewayImpl(BaseGateway, GameStateGateway):
         await self._session.execute(
             update(entities.GameState)
             .where(entities.GameState.id == game_state.id)
-            .values(
-                game_id=game_state.game.id,
-                state=game_state.state
-            )
+            .values(game_id=game_state.game.id, state=game_state.state)
         )
 
     async def create(self, game_state: entities.GameState) -> None:

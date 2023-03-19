@@ -1,8 +1,6 @@
 from app.infrastructure.tg_api.filters import Filter
 from app.infrastructure.tg_api.dto import Update
-from app.infrastructure.tg_api.states import (
-    GameState
-)
+from app.infrastructure.tg_api.states import GameState
 
 
 class GameStateFilter(Filter):
@@ -13,7 +11,6 @@ class GameStateFilter(Filter):
         self,
         update: Update,
     ) -> bool:
-
         if update.game_state_data is None:
             return False
         if update.game_state_data.state == GameState.STOP:

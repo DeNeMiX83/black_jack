@@ -14,9 +14,7 @@ class RabbitMQUpdatePublisher:
     async def connect(self):
         connection = await aio_pika.connect_robust(self._rabbitmq_url)
         self._channel = await connection.channel()
-        await self._channel.declare_queue(
-            self._rabbitmq_queue, durable=True
-        )
+        await self._channel.declare_queue(self._rabbitmq_queue, durable=True)
 
     async def publish_update(self, update: dict):
         await self._channel.default_exchange.publish(

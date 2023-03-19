@@ -6,11 +6,7 @@ from app.core.game import entities as game_entities
 
 
 class DeletePlayerHandler(Handler):
-    def __init__(
-        self,
-        player_gateway: PlayerGateway,
-        commiter: Commiter
-    ):
+    def __init__(self, player_gateway: PlayerGateway, commiter: Commiter):
         self._player_gateway = player_gateway
         self._commiter = commiter
 
@@ -18,6 +14,3 @@ class DeletePlayerHandler(Handler):
         await self._player_gateway.delete_by_id(player_id)
 
         await self._commiter.commit()
-
-
-

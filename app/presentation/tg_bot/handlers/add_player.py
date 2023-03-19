@@ -2,12 +2,15 @@ import json
 import asyncio
 from uuid import UUID
 import logging
+from app.presentation.tg_bot.middlewares import throttling_rate
 from app.infrastructure.tg_api import TgBot
 from app.infrastructure.tg_api.dto import Update
 from app.presentation.tg_bot.loader import tg_bot
 from app.core.game.exceptions import PlayerAlreadyExistsException
 from app.infrastructure.tg_api.states import (
-    GameState, GameStateKey, GameStateData
+    GameState,
+    GameStateKey,
+    GameStateData,
 )
 from app.infrastructure.tg_api.filters import (
     GameStateFilter,
@@ -26,9 +29,9 @@ from app.presentation.tg_bot.handlers.common import start_procces_game_over
 logger = logging.getLogger()
 
 
+@throttling_rate(rate_limit=10)
 @tg_bot.callback_query_handler(
-    GameStateFilter(GameState.START),
-    CallbackQueryDataFilter("user_join_game")
+    GameStateFilter(GameState.START), CallbackQueryDataFilter("user_join_game")
 )
 async def _add_player(update: Update, bot: TgBot):
     chat_id = update.callback_query.message.chat.id  # type: ignore
@@ -75,7 +78,7 @@ async def gathering_players(update: Update, bot: TgBot):
         GameStateKey(chat_id=chat_id),
         GameStateData(state=GameState.START, game_id=game_id),
     )
-    logger.info(f'{chat_id}: Начинается сбор игроков')
+    logger.info(f"{chat_id}: Начинается сбор игроков")
 
     await timer_waiting_moves(update, bot, game_id)
 
@@ -121,8 +124,8 @@ async def timer_waiting_moves(update: Update, bot: TgBot, game_id: UUID):
     delta = 10
     msg = await bot.send_message(
         chat_id=chat_id,
-        text="Начинаем набор игроков\n" +
-             f"До окончания сбора игроков осталось {time} секунд.",
+        text="Начинаем набор игроков\n"
+        + f"До окончания сбора игроков осталось {time} секунд.",
         reply_markup=json.dumps(inline_keyboard),
     )
     await asyncio.sleep(delta)
@@ -131,8 +134,8 @@ async def timer_waiting_moves(update: Update, bot: TgBot, game_id: UUID):
         await bot.edit_message_text(
             chat_id=chat_id,
             message_id=msg.message_id,
-            text="Начинаем набор игроков.\n" +
-                 f"До окончания сбора игроков осталось {i} секунд.",
+            text="Начинаем набор игроков.\n"
+            + f"До окончания сбора игроков осталось {i} секунд.",
             reply_markup=json.dumps(inline_keyboard),
         )
         if i > 0:
@@ -164,16 +167,12 @@ async def game_start(update: Update, bot: TgBot):
         await start_procces_game_over(update, bot)
         return
 
-    await bot.send_message(
-        chat_id=chat_id, text=get_text_list_players(players)
-    )
+    await bot.send_message(chat_id=chat_id, text=get_text_list_players(players))
 
     await set_states(update, bot)
 
 
-async def set_states(
-    update: Update, bot: TgBot
-):
+async def set_states(update: Update, bot: TgBot):
     if update.callback_query is not None:
         chat_id = update.callback_query.message.chat.id
     else:
@@ -200,9 +199,7 @@ async def set_states(
         GameStateData(state=GameState.PRE_BET, game_id=game_id),
     )
 
-    logger.info(
-        f"{chat_id}: Состояние игры изменилось на {GameState.PRE_BET}"
-    )
+    logger.info(f"{chat_id}: Состояние игры изменилось на {GameState.PRE_BET}")
 
 
 def get_text_list_players(players: list[game_entities.Player]) -> str:

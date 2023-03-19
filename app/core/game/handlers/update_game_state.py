@@ -1,8 +1,6 @@
 from app.core.common.handler import Handler
 from app.core.common.protocols import Commiter
-from app.core.game.protocols import (
-    GameGateway, GameStateGateway
-)
+from app.core.game.protocols import GameGateway, GameStateGateway
 from app.core.chat.protocols import ChatGateway
 from app.core.game import dto as game_dto
 

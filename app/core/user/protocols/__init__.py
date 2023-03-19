@@ -1,1 +1,1 @@
-from .user_gateway import UserGateway # noqa
+from .user_gateway import UserGateway  # noqa

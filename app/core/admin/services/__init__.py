@@ -1,1 +1,1 @@
-from .login_admin import LoginAdminServiceImpl # noqa
+from .login_admin import LoginAdminServiceImpl  # noqa

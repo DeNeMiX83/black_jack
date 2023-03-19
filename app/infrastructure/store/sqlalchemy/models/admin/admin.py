@@ -8,11 +8,9 @@ from app.core.admin import entities
 
 
 class Admin(Base):
-    __tablename__ = 'admin'
+    __tablename__ = "admin"
 
-    id = Column(
-        Integer, primary_key=True, autoincrement=True
-    )
+    id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
 

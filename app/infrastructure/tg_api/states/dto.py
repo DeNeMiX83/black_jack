@@ -1,9 +1,6 @@
 from pydantic import BaseModel
 from uuid import UUID
-from .states import (
-    GameState as game_states,
-    PlayerState as player_states
-)
+from .states import GameState as game_states, PlayerState as player_states
 
 
 class GameStateKey(BaseModel):

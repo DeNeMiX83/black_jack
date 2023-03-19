@@ -3,8 +3,10 @@ from app.infrastructure.tg_api import TgBot
 from app.infrastructure.tg_api.dto import Update
 from app.infrastructure.tg_api.filters import CommandFilter
 from app.presentation.tg_bot.handlers.common import start_procces_game_over
+from app.presentation.tg_bot.middlewares import throttling_rate
 
 
+@throttling_rate(rate_limit=5)
 @tg_bot.message_handler(CommandFilter("/game_stop"))
 async def _game_stop(update: Update, bot: TgBot):
     await start_procces_game_over(update, bot)

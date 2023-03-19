@@ -10,14 +10,10 @@ from app.core.game import entities as game_entities
 
 
 class Game(Base):
-    __tablename__ = 'game'
+    __tablename__ = "game"
 
-    id = Column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
-    chat_id = Column(
-        UUID(as_uuid=True), ForeignKey('chat.id'), nullable=False
-    )
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    chat_id = Column(UUID(as_uuid=True), ForeignKey("chat.id"), nullable=False)
     is_over = Column(Boolean, default=False)
 
 
@@ -26,7 +22,5 @@ def game_mapping(mapper_registry):
     mapper_registry.map_imperatively(
         game_entities.Game,
         table,
-        properties={
-            'chat': relationship(chat_entities.Chat, lazy='joined')
-        }
+        properties={"chat": relationship(chat_entities.Chat, lazy="joined")},
     )
