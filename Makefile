@@ -1,6 +1,6 @@
 DOCKER_COMPOSE := deploy/docker-compose.yml
 DOCKER_ENV := deploy/.env
-DOCKER_COMPOSE_RUNNER := docker-compose
+DOCKER_COMPOSE_RUNNER := docker compose
 
 ifneq ($(ENV),)
 	DOCKER_COMPOSE := deploy/dev.docker-compose.yml

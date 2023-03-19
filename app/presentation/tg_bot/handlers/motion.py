@@ -231,31 +231,31 @@ async def save_game_results(update: Update, bot: TgBot):
         if player.status == game_entities.player_status.LOSE:
             text += (
                 f"{n + 1}. @{player.user.username} \t проиграл\n"
-                + f"счет: {player.score} баланс: {player.user.balance}\n"
+                + f"счет: {player.score}\n"
             )
             lose.append(player.id)
         elif dealer_result > 21:
             text += (
                 f"{n + 1}. @{player.user.username} \t выйграл\n"
-                + f"счет: {player.score} баланс: {player.user.balance}\n"
+                + f"счет: {player.score}\n"
             )
             win.append(player.id)
         elif player.score < dealer_result:
             text += (
                 f"{n + 1}. @{player.user.username} \t проиграл\n"
-                + f"счет: {player.score} баланс: {player.user.balance}\n"
+                + f"счет: {player.score}\n"
             )
             lose.append(player.id)
         elif player.score == dealer_result:
             text += (
                 f"{n + 1}. @{player.user.username} \t ничья\n"
-                + f"счет: {player.score} баланс: {player.user.balance}\n"
+                + f"счет: {player.score}\n"
             )
             draw.append(player.id)
         else:
             text += (
                 f"{n + 1}. @{player.user.username} \t выйграл\n"
-                + f"счет: {player.score} баланс: {player.user.balance}\n"
+                + f"счет: {player.score}\n"
             )
             win.append(player.id)
 

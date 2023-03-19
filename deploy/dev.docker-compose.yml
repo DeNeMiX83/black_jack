@@ -51,6 +51,7 @@ services:
       - ${REDIS_HOST_PORT}:${REDIS_PORT}
     volumes:
       - ${PROJECT_NAME}_redis_data:/data
+    command: redis-server --appendonly yes
 
   tg_bot:
     container_name: ${PROJECT_NAME}_tg_bot

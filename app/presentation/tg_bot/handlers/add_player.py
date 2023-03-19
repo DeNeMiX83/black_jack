@@ -29,7 +29,6 @@ from app.presentation.tg_bot.handlers.common import start_procces_game_over
 logger = logging.getLogger()
 
 
-@throttling_rate(rate_limit=10)
 @tg_bot.callback_query_handler(
     GameStateFilter(GameState.START), CallbackQueryDataFilter("user_join_game")
 )

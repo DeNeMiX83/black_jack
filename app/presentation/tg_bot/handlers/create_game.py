@@ -19,6 +19,7 @@ from app.presentation.tg_bot.middlewares import throttling_rate
 logger = logging.getLogger()
 
 
+# @throttling_rate(rate_limit=10)
 @tg_bot.message_handler(CommandFilter("/game_create"))
 async def create_game(update: Update, bot: TgBot):
     if update.callback_query is not None:
@@ -47,6 +48,7 @@ async def create_game(update: Update, bot: TgBot):
         return
     except GameAlreadyExistsException:
         await bot.send_message(chat_id=chat_id, text="Игра уже существует")
+        await session.slose()
         return
 
     logger.info(f"{chat_id}: Игра создана")
