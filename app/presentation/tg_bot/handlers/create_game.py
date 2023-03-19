@@ -20,7 +20,7 @@ logger = logging.getLogger()
 
 
 @throttling_rate(rate_limit=10)
-@tg_bot.message_handler(CommandFilter("/create_game"))
+@tg_bot.message_handler(CommandFilter("/game_create"))
 async def create_game(update: Update, bot: TgBot):
     if update.callback_query is not None:
         chat_id = update.callback_query.message.chat.id
