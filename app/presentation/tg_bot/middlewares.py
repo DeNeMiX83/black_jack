@@ -40,7 +40,7 @@ class ThrottlingMiddleware(Middleware):
                 "notified": False,
             }
         else:
-            rate_limit = getattr(handler, "throttle_rate_limit", 0)
+            rate_limit = getattr(handler, "rate_limit", 0)
             if rate_limit == 0:
                 return
             last_update_time = self._storage[key]["last_update_time"]
