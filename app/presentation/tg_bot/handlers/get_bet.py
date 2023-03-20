@@ -47,7 +47,7 @@ async def _get_bet(update: Update, bot: TgBot):
     try:
         bet = int(bet)
     except ValueError:
-        await bot.send_message(chat_id=chat_id, text="Должны быть цифры")
+        await bot.send_message(chat_id=chat_id, text="Должно быть целое число")
         return
 
     int_32 = 2**31

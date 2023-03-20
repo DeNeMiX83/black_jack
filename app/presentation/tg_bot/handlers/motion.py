@@ -65,7 +65,11 @@ async def _get_card(update: Update, bot: TgBot):
     )
 
     if player.score > 21:
-        await player_lose(update, bot, player)
+        await bot.send_message(
+            chat_id=chat_id,
+            text=f"@{player.user.username} набрал больше 21.",
+        )
+        await player_lose(update, bot)
         return
 
     new_state = game_dto.PlayerStateUpdate(
@@ -192,12 +196,13 @@ async def timer_waiting_moves(update: Update, bot: TgBot):
             player_state_data = await player_states_storage.get_state(
                 PlayerStateKey(chat_id=chat_id, user_id=player.user.tg_id)
             )
+            print(player_state_data.state)
             if player_state_data.state == PlayerState.MOTION:
                 await bot.send_message(
                     chat_id=chat_id,
                     text=f"@{player.user.username} неуспел сделать ход",
                 )
-                await player_lose(update, bot, player)
+                await player_lose(update, bot)
                 
         session = await bot.get_session()
         get_players_handler = get_game_players(session)
@@ -309,13 +314,15 @@ async def save_game_results(update: Update, bot: TgBot):
     await session.close()
 
 
-async def player_lose(update: Update, bot: TgBot, player: game_entities.Player):
+async def player_lose(update: Update, bot: TgBot):
     if update.callback_query is not None:
         chat_id = update.callback_query.message.chat.id
-        user_id = update.callback_query.message.from_user.id
+        user_id = update.callback_query.from_user.id
+        username = update.callback_query.from_user.username
     else:
         chat_id = update.message.chat.id
         user_id = update.message.from_user.id
+        username = update.message.from_user.username
 
     session = await bot.get_session()
     update_player_state_handler = update_player_state(session)
@@ -324,17 +331,17 @@ async def player_lose(update: Update, bot: TgBot, player: game_entities.Player):
     player_data = update.player_state_data
     player_id = player_data.player_id
 
-    new_state = game_dto.PlayerStateUpdate(
-        player_id=player_id, new_state=game_entities.player_status.LOSE
-    )
-    await update_player_state_handler.execute(new_state)
     await player_states_storage.add_state(
         PlayerStateKey(chat_id=chat_id, user_id=user_id),
         PlayerStateData(state=PlayerState.LOSE, player_id=player_id),
     )
+    new_state = game_dto.PlayerStateUpdate(
+        player_id=player_id, new_state=game_entities.player_status.LOSE
+    )
+    await update_player_state_handler.execute(new_state)
     await bot.send_message(
         chat_id=chat_id,
-        text=f"@{player.user.username} проиграл",
+        text=f"@{username} проиграл",
     )
-    logger.info(f"{chat_id}: user {player.user.tg_id} проиграл")
+    logger.info(f"{chat_id}: user {user_id} проиграл")
     await session.close()
