@@ -40,7 +40,9 @@ class ThrottlingMiddleware(Middleware):
                 "notified": False,
             }
         else:
-            rate_limit = getattr(handler, "throttle_rate_limit", 5)
+            rate_limit = getattr(handler, "throttle_rate_limit", 0)
+            if rate_limit == 0:
+                return
             last_update_time = self._storage[key]["last_update_time"]
 
             if time.time() - last_update_time < rate_limit:
@@ -56,6 +58,6 @@ class ThrottlingMiddleware(Middleware):
                 self._storage[key]["notified"] = True
                 await self._bot.send_message(
                     chat_id=chat_id,
-                    text=f'@{user_name} блокировка на {rate_limit} сек.'
+                    text=f"@{user_name} блокировка на {rate_limit} сек.",
                 )
             raise Exception(f"User {user_id} is throttled")

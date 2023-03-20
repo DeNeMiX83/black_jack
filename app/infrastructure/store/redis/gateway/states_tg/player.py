@@ -27,3 +27,8 @@ class PlayerStateGatewayImp(BaseGateway, PlayerStateGateway):
             player_id=UUID(data.get("player_id")),
         )
         return data
+
+    async def delete(self, key: PlayerStateKey) -> None:
+        composite_key = f"chat_id:{key.chat_id}:user_id:{key.user_id}"
+
+        await self._redis.delete(composite_key)

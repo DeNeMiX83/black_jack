@@ -15,6 +15,9 @@ class GameStatesStorageImpl(GameStatesStorage):
         result = await self._game_state_gateway.get(key)
         return result
 
+    async def remove_state(self, key: GameStateKey) -> None:
+        await self._game_state_gateway.delete(key)
+
 
 class PlayerStatesStorageImpl(PlayerStatesStorage):
     def __init__(self, player_state_gateway: PlayerStateGateway):
@@ -26,3 +29,6 @@ class PlayerStatesStorageImpl(PlayerStatesStorage):
     async def get_state(self, key: PlayerStateKey) -> Optional[dict]:
         result = await self._player_state_gateway.get(key)
         return result
+
+    async def remove_state(self, key: PlayerStateKey) -> None:
+        await self._player_state_gateway.delete(key)

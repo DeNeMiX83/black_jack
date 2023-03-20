@@ -80,6 +80,7 @@ async def _get_card(update: Update, bot: TgBot):
     )
 
     logger.info(f"{chat_id}: user {user_id}: взял карту {card.rank}")
+    await session.close()
 
 
 @tg_bot.callback_query_handler(
@@ -114,6 +115,7 @@ async def _motion_pass(update: Update, bot: TgBot):
     )
 
     logger.info(f"{chat_id}: user {user_id}: пропуск хода")
+    await session.close()
 
 
 @tg_bot.common_handler(GameStateFilter(GameState.PRE_MOTION))
@@ -148,7 +150,6 @@ async def timer_waiting_moves(update: Update, bot: TgBot):
     session = await bot.get_session()
 
     get_players_handler = get_game_players(session)
-    update_player_state_handler = update_player_state(session)
     player_states_storage = await bot.get_player_states_storage()
 
     game_data = update.game_state_data
@@ -156,14 +157,10 @@ async def timer_waiting_moves(update: Update, bot: TgBot):
     players: list[game_entities.Player] = await get_players_handler.execute(
         game_id
     )  # type: ignore
+    await session.close()
     while players:
         for i in range(len(players)):
             player = players[i]
-            new_state = game_dto.PlayerStateUpdate(
-                player_id=player.id,
-                new_state=game_entities.player_status.MOTION,
-            )
-            await update_player_state_handler.execute(new_state)
             await player_states_storage.add_state(
                 PlayerStateKey(chat_id=chat_id, user_id=player.user.tg_id),
                 PlayerStateData(state=PlayerState.MOTION, player_id=player.id),
@@ -201,6 +198,7 @@ async def timer_waiting_moves(update: Update, bot: TgBot):
                 players,
             )
         )
+        await session.close()
 
 
 async def save_game_results(update: Update, bot: TgBot):
@@ -293,3 +291,4 @@ async def save_game_results(update: Update, bot: TgBot):
     )
 
     logger.info("Результаты подсчитаны")
+    await session.close()
