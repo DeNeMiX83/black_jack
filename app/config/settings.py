@@ -85,6 +85,7 @@ class Settings:
     tg_api_url: str = field(init=False)
     tg_api_url_with_token: str = field(init=False)
     tg_bot_token: str = field(init=False)
+    size_balance_increase: int = field(init=False)
 
     admin_api: AdminApiSettings = field(
         init=False, default_factory=AdminApiSettings
@@ -106,3 +107,4 @@ class Settings:
         self.tg_api_url = os.getenv("TG_API_URL")
         self.tg_bot_token = os.getenv("TG_BOT_TOKEN")
         self.tg_api_url_with_token = f"{self.tg_api_url}/bot{self.tg_bot_token}"
+        self.size_balance_increase = os.getenv("SIZE_BALANCE_INCREASE")

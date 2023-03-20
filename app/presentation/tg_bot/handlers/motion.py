@@ -5,6 +5,7 @@ import logging
 from app.infrastructure.tg_api import TgBot
 from app.infrastructure.tg_api.dto import Update
 from app.presentation.tg_bot.loader import tg_bot
+from app.presentation.tg_bot.handlers.common import start_procces_game_over
 from app.infrastructure.tg_api.states import (
     GameState,
     GameStateKey,
@@ -27,7 +28,7 @@ from app.presentation.tg_bot.builders import (
     get_player,
     save_player_results,
 )
-from app.presentation.tg_bot.handlers.common import start_procces_game_over
+from app.core.game import entities as game_entities
 
 logger = logging.getLogger()
 
@@ -53,6 +54,10 @@ async def _get_card(update: Update, bot: TgBot):
     card = await get_card_handler.execute(player_id)
     player = await get_player_handler.execute(player_id)
 
+    await bot.delete_message(
+        chat_id=chat_id,
+        message_id=update.callback_query.message.message_id,
+    )
     await bot.send_message(
         chat_id=chat_id,
         text=f"@{player.user.username} вытянул карту {card.rank}{card.suit}.\n"
@@ -60,19 +65,12 @@ async def _get_card(update: Update, bot: TgBot):
     )
 
     if player.score > 21:
-        new_state = game_dto.PlayerStateUpdate(
-            player_id=player_id, new_state=game_entities.player_status.LOSE
-        )
-        await bot.send_message(
-            chat_id=chat_id,
-            text=f"@{player.user.username} проиграл",
-        )
-        logger.info(f"{chat_id}: user {player.user.tg_id} проиграл")
-    else:
-        new_state = game_dto.PlayerStateUpdate(
-            player_id=player_id, new_state=game_entities.player_status.WAIT
-        )
+        await player_lose(update, bot, player)
+        return
 
+    new_state = game_dto.PlayerStateUpdate(
+        player_id=player_id, new_state=game_entities.player_status.WAIT
+    )
     await update_player_state_handler.execute(new_state)
     await player_states_storage.add_state(
         PlayerStateKey(chat_id=chat_id, user_id=user_id),
@@ -99,6 +97,10 @@ async def _motion_pass(update: Update, bot: TgBot):
     player_data = update.player_state_data
     player_id = player_data.player_id
 
+    await bot.delete_message(
+        chat_id=chat_id,
+        message_id=update.callback_query.message.message_id,
+    )
     await bot.send_message(
         chat_id=chat_id,
         text=f"@{update.callback_query.from_user.username} пасанул",
@@ -187,6 +189,16 @@ async def timer_waiting_moves(update: Update, bot: TgBot):
             )
             await asyncio.sleep(5)
 
+            player_state_data = await player_states_storage.get_state(
+                PlayerStateKey(chat_id=chat_id, user_id=player.user.tg_id)
+            )
+            if player_state_data.state == PlayerState.MOTION:
+                await bot.send_message(
+                    chat_id=chat_id,
+                    text=f"@{player.user.username} неуспел сделать ход",
+                )
+                await player_lose(update, bot, player)
+                
         session = await bot.get_session()
         get_players_handler = get_game_players(session)
 
@@ -259,6 +271,7 @@ async def save_game_results(update: Update, bot: TgBot):
 
     results = []
     for player_id in lose:
+        logger.info(f"{chat_id}: {player.user.tg_id} выйграл ставка: {player.bet} прибавка: {0}")
         new_result = game_dto.PlayerResult(
             player_id=player_id,
             new_state=game_entities.player_status.LOSE,
@@ -267,6 +280,7 @@ async def save_game_results(update: Update, bot: TgBot):
 
         results.append(new_result)
     for player_id in win:
+        logger.info(f"{chat_id}: {player.user.tg_id} выйграл ставка: {player.bet} прибавка: {player.bet * 2}")
         new_result = game_dto.PlayerResult(
             player_id=player_id,
             new_state=game_entities.player_status.WIN,
@@ -274,6 +288,7 @@ async def save_game_results(update: Update, bot: TgBot):
         )
         results.append(new_result)
     for player_id in draw:
+        logger.info(f"{chat_id}: {player.user.tg_id} выйграл ставка: {player.bet} прибавка: {player.bet * 1.5}")
         new_result = game_dto.PlayerResult(
             player_id=player_id,
             new_state=game_entities.player_status.DRAW,
@@ -291,4 +306,35 @@ async def save_game_results(update: Update, bot: TgBot):
     )
 
     logger.info("Результаты подсчитаны")
+    await session.close()
+
+
+async def player_lose(update: Update, bot: TgBot, player: game_entities.Player):
+    if update.callback_query is not None:
+        chat_id = update.callback_query.message.chat.id
+        user_id = update.callback_query.message.from_user.id
+    else:
+        chat_id = update.message.chat.id
+        user_id = update.message.from_user.id
+
+    session = await bot.get_session()
+    update_player_state_handler = update_player_state(session)
+    player_states_storage = await bot.get_player_states_storage()
+
+    player_data = update.player_state_data
+    player_id = player_data.player_id
+
+    new_state = game_dto.PlayerStateUpdate(
+        player_id=player_id, new_state=game_entities.player_status.LOSE
+    )
+    await update_player_state_handler.execute(new_state)
+    await player_states_storage.add_state(
+        PlayerStateKey(chat_id=chat_id, user_id=user_id),
+        PlayerStateData(state=PlayerState.LOSE, player_id=player_id),
+    )
+    await bot.send_message(
+        chat_id=chat_id,
+        text=f"@{player.user.username} проиграл",
+    )
+    logger.info(f"{chat_id}: user {player.user.tg_id} проиграл")
     await session.close()
