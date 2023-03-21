@@ -178,21 +178,10 @@ async def set_states(update: Update, bot: TgBot):
     else:
         chat_id = update.message.chat.id
 
-    session = await bot.get_session()
-
-    update_game_state_handler = update_game_state(session)
-
     game_states_storage = await bot.get_game_states_storage()
 
     game_data = update.game_state_data
     game_id = game_data.game_id
-
-    new_game_state = game_dto.GameStateUpdate(
-        game_id=game_id,
-        new_state=game_entities.game_states.BET,
-    )
-
-    await update_game_state_handler.execute(new_game_state)
 
     await game_states_storage.add_state(
         GameStateKey(chat_id=chat_id),

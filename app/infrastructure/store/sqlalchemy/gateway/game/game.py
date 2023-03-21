@@ -15,7 +15,8 @@ class GameGatewayImpl(BaseGateway, GameGateway):
     async def get_by_chat_id(self, chat_id: UUID) -> entities.Game:
         stmt = select(entities.Game).where(
             and_(
-                entities.Game.chat_id == chat_id, entities.Game.is_over == False
+                entities.Game.chat_id == chat_id,
+                entities.Game.is_over == False
             )
         )
         result = await self._session.execute(stmt)

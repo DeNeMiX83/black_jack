@@ -41,9 +41,8 @@ async def start_procces_game_over(
     await update_game_state_handler.execute(new_game_state)
     await game_over_handler.execute(game_id)
 
-    await game_states_storage.add_state(
+    await game_states_storage.delete(
         GameStateKey(chat_id=chat_id),
-        GameStateData(state=GameState.STOP, game_id=game_id),
     )
 
     logger.info(
