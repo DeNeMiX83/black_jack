@@ -8,6 +8,9 @@ class StatesStorage(Protocol):
     async def get_state(self, key: Any) -> Optional[dict]:
         raise NotImplementedError
 
+    async def remove_state(self, key: Any) -> None:
+        raise NotImplementedError
+
 
 class GameStatesStorage(StatesStorage):
     ...

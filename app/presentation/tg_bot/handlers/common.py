@@ -41,7 +41,7 @@ async def start_procces_game_over(
     await update_game_state_handler.execute(new_game_state)
     await game_over_handler.execute(game_id)
 
-    await game_states_storage.delete(
+    await game_states_storage.remove_state(
         GameStateKey(chat_id=chat_id),
     )
 
