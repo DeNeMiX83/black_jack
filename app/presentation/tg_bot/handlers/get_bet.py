@@ -11,7 +11,9 @@ from app.infrastructure.tg_api.states import (
     PlayerStateKey,
     PlayerStateData,
 )
-from app.infrastructure.tg_api.filters import GameStateFilter, PlayerStateFilter
+from app.infrastructure.tg_api.filters import (
+    GameStateFilter, PlayerStateFilter
+)
 from app.core.game import dto as game_dto
 from app.core.game import entities as game_entities
 from app.presentation.tg_bot.builders import (
@@ -23,7 +25,6 @@ from app.presentation.tg_bot.builders import (
     delete_player_by_id,
 )
 from app.presentation.tg_bot.handlers.common import start_procces_game_over
-from app.presentation.tg_bot.middlewares import throttling_rate
 
 logger = logging.getLogger()
 
@@ -46,7 +47,7 @@ async def _get_bet(update: Update, bot: TgBot):
     try:
         bet = int(bet)
     except ValueError:
-        await bot.send_message(chat_id=chat_id, text="Должны быть цифры")
+        await bot.send_message(chat_id=chat_id, text="Должно быть целое число")
         return
 
     int_32 = 2**31
@@ -88,6 +89,7 @@ async def _get_bet(update: Update, bot: TgBot):
         f"{chat_id}: user {user_id}: состояние сменилось "
         + f"на {PlayerState.WAIT}"
     )
+    await session.close()
 
 
 @tg_bot.common_handler(GameStateFilter(GameState.PRE_BET))

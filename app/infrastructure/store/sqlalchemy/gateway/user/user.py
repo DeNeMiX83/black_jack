@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, update
 from app.core.user.protocols import UserGateway
 from app.infrastructure.store.sqlalchemy.gateway import BaseGateway
 from app.core.user import entities
@@ -26,3 +26,14 @@ class UserGatewayImpl(BaseGateway, UserGateway):
         )
         result = await self._session.execute(stmt)
         return result.scalars().fetchall()
+
+    async def update(self, user: entities.User) -> None:
+        await self._session.execute(
+            update(entities.User)
+            .where(entities.User.id == user.id)
+            .values(
+                tg_id=user.tg_id,
+                username=user.username,
+                balance=user.balance
+            )
+        )

@@ -16,4 +16,5 @@ from .game import (  # noqa
 from .user import (  # noqa
     get_user_balance_handler_build,
     get_top_users_handler_build,
+    increase_user_balance_handler_build,
 )

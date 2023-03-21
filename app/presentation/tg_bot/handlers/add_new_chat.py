@@ -27,11 +27,11 @@ async def add_new_chat(update: Update, bot: TgBot):
     except ValueError:
         await bot.send_message(
             chat_id=chat_id,
-            text="Чат уже добавлен.\nВы можете создать игру в чате.\nДля этого нажмите /create_game",
+            text="Чат уже добавлен.\nВы можете создать игру в чате.\nДля этого нажмите /game_create",
         )
         return
 
     await bot.send_message(
         chat_id=chat_id,
-        text="Приветствую! Вы можете создать игру в чате.\nДля этого нажмите /create_game",
+        text="Приветствую! Вы можете создать игру в чате.\nДля этого нажмите /game_create",
     )

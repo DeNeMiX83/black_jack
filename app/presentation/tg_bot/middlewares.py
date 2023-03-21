@@ -31,29 +31,33 @@ class ThrottlingMiddleware(Middleware):
         user_name = user.username  # type: ignore
 
         key = (handler._handler_func.__name__, chat_id, user_id)
+
+        show_exc = False
         if key not in self._storage:
             self._storage[key] = {
                 "last_update_time": time.time(),
-                "count": 1,
-                "notify": True,
+                "update_count": 0,
+                "notified": False,
             }
-            return
         else:
             rate_limit = getattr(handler, "rate_limit", 0)
             if rate_limit == 0:
                 return
-            if (
-                time.time() - self._storage[key]["last_update_time"]
-                < rate_limit
-            ):
-                logger.warning(f"User {user_id} is throttled")
-                if self._storage[key]["notify"]:
-                    await self._bot.send_message(
-                        chat_id=chat_id,
-                        text=f"@{user_name} блокировка на {rate_limit} сек.",
-                    )
-                self._storage[key]["last_update_time"] = time.time()
-                self._storage[key]["notify"] = False
-                raise Exception(f"User {user_id} is throttled")
+            last_update_time = self._storage[key]["last_update_time"]
 
-        del self._storage[key]
+            if time.time() - last_update_time < rate_limit:
+                show_exc = True
+            else:
+                self._storage[key]["notified"] = False
+
+        self._storage[key]["last_update_time"] = time.time()
+        self._storage[key]["update_count"] += 1
+
+        if show_exc:
+            if not self._storage[key]["notified"]:
+                self._storage[key]["notified"] = True
+                await self._bot.send_message(
+                    chat_id=chat_id,
+                    text=f"@{user_name} блокировка на {rate_limit} сек.",
+                )
+            raise Exception(f"User {user_id} is throttled")

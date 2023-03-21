@@ -1,11 +1,11 @@
-from typing import Protocol, Optional
+from typing import Protocol, Optional, Any
 
 
 class StatesStorage(Protocol):
-    async def add_state(self, chat_id: int, data: dict):
+    async def add_state(self, key: Any, data: Any):
         raise NotImplementedError
 
-    async def get_state(self, chat_id: int) -> Optional[dict]:
+    async def get_state(self, key: Any) -> Optional[dict]:
         raise NotImplementedError
 
 

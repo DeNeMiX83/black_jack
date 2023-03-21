@@ -11,6 +11,9 @@ from app.infrastructure.tg_api.states import (
     GameState,
     GameStateKey,
     GameStateData,
+    PlayerState,
+    PlayerStateKey,
+    PlayerStateData
 )
 from app.infrastructure.tg_api.filters import (
     GameStateFilter,
@@ -29,15 +32,16 @@ from app.presentation.tg_bot.handlers.common import start_procces_game_over
 logger = logging.getLogger()
 
 
-@throttling_rate(rate_limit=10)
 @tg_bot.callback_query_handler(
     GameStateFilter(GameState.START), CallbackQueryDataFilter("user_join_game")
 )
 async def _add_player(update: Update, bot: TgBot):
     chat_id = update.callback_query.message.chat.id  # type: ignore
+    user_id = update.callback_query.from_user.id
 
     session = await bot.get_session()
-    add_player_handler = add_player(session)
+    add_player_and_get_handler = add_player(session)
+    player_states_storage = await bot.get_player_states_storage()
 
     game_data = update.game_state_data
     game_id = game_data.game_id
@@ -54,9 +58,14 @@ async def _add_player(update: Update, bot: TgBot):
     )
 
     try:
-        await add_player_handler.execute(player_create)
+        player = await add_player_and_get_handler.execute(player_create)
     except PlayerAlreadyExistsException:
         return
+
+    await player_states_storage.add_state(
+        PlayerStateKey(chat_id=chat_id, user_id=user_id),
+        PlayerStateData(state=PlayerState.WAIT, player_id=player.id),
+    )
 
     logger.info(
         f"{chat.tg_id}: user - {player_create.tg_id} added to game: {game_id}"

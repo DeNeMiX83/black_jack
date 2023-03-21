@@ -80,6 +80,13 @@ class TgBot:
         ) as response:
             response.raise_for_status()
 
+    async def delete_message(self, **kwargs):
+        url = f"{self._url}/deleteMessage"
+        async with self._session.get(
+            url, params={**kwargs}
+        ) as response:
+            response.raise_for_status()
+
     def message_handler(self, *filters: Filter):
         def decorator(handler_func):
             new_filters = (MessageFilter(),) + filters

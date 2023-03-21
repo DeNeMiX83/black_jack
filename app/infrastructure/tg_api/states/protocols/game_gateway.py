@@ -8,3 +8,6 @@ class GameStateGateway(Protocol):
 
     async def get(self, key: GameStateKey) -> Optional[GameStateData]:
         raise NotImplementedError
+
+    async def delete(self, key: GameStateKey) -> None:
+        raise NotImplementedError

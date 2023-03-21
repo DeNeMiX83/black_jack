@@ -16,6 +16,7 @@ async def _get_user_balance(update: Update, bot: TgBot):
 /start - начать взаимодействие с ботом.
 /game_create - создать игру.
 /game_stop - завершить игру.
+/get_cache - взять деньги при нулевом балансе.
 /balance - узнать свой баланс.
 /top - топ 10 всех пользователей
     """
