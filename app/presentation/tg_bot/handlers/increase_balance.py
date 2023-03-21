@@ -23,7 +23,7 @@ async def _increase_balance(update: Update, bot: TgBot):
         result = await increase_user_balance_handler.execute(
             dto.IncreaseUserBalance(
                 user_tg_id=user_id,
-                size_increase=bot.settings.size_balance_increase
+                size_increase=bot.settings.size_balance_increase,
             )
         )
     except UserNotFoundException:

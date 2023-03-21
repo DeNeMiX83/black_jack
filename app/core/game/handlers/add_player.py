@@ -23,7 +23,9 @@ class AddPlayerHandler(Handler):
         self._user_gateway = user_gateway
         self._commiter = commiter
 
-    async def execute(self, player: game_dto.PlayerCreate) -> game_entities.Player:
+    async def execute(
+        self, player: game_dto.PlayerCreate
+    ) -> game_entities.Player:
         user = await self._user_gateway.get_by_tg_id(player.tg_id)
 
         if user is None:

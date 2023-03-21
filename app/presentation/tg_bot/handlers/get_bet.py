@@ -11,9 +11,7 @@ from app.infrastructure.tg_api.states import (
     PlayerStateKey,
     PlayerStateData,
 )
-from app.infrastructure.tg_api.filters import (
-    GameStateFilter, PlayerStateFilter
-)
+from app.infrastructure.tg_api.filters import GameStateFilter, PlayerStateFilter
 from app.core.game import dto as game_dto
 from app.core.game import entities as game_entities
 from app.presentation.tg_bot.builders import (

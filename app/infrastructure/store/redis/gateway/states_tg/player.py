@@ -32,4 +32,3 @@ class PlayerStateGatewayImp(BaseGateway, PlayerStateGateway):
         composite_key = f"chat_id:{key.chat_id}:user_id:{key.user_id}"
 
         await self._redis.delete(composite_key)
-

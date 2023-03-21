@@ -196,14 +196,14 @@ async def timer_waiting_moves(update: Update, bot: TgBot):
             player_state_data = await player_states_storage.get_state(
                 PlayerStateKey(chat_id=chat_id, user_id=player.user.tg_id)
             )
-            print(player_state_data.state)
+            
             if player_state_data.state == PlayerState.MOTION:
                 await bot.send_message(
                     chat_id=chat_id,
                     text=f"@{player.user.username} неуспел сделать ход",
                 )
                 await player_lose(update, bot)
-                
+
         session = await bot.get_session()
         get_players_handler = get_game_players(session)
 
@@ -276,7 +276,9 @@ async def save_game_results(update: Update, bot: TgBot):
 
     results = []
     for player_id in lose:
-        logger.info(f"{chat_id}: {player.user.tg_id} выйграл ставка: {player.bet} прибавка: {0}")
+        logger.info(
+            f"{chat_id}: {player.user.tg_id} выйграл ставка: {player.bet} прибавка: {0}"
+        )
         new_result = game_dto.PlayerResult(
             player_id=player_id,
             new_state=game_entities.player_status.LOSE,
@@ -285,7 +287,9 @@ async def save_game_results(update: Update, bot: TgBot):
 
         results.append(new_result)
     for player_id in win:
-        logger.info(f"{chat_id}: {player.user.tg_id} выйграл ставка: {player.bet} прибавка: {player.bet * 2}")
+        logger.info(
+            f"{chat_id}: {player.user.tg_id} выйграл ставка: {player.bet} прибавка: {player.bet * 2}"
+        )
         new_result = game_dto.PlayerResult(
             player_id=player_id,
             new_state=game_entities.player_status.WIN,
@@ -293,7 +297,9 @@ async def save_game_results(update: Update, bot: TgBot):
         )
         results.append(new_result)
     for player_id in draw:
-        logger.info(f"{chat_id}: {player.user.tg_id} выйграл ставка: {player.bet} прибавка: {player.bet * 1.5}")
+        logger.info(
+            f"{chat_id}: {player.user.tg_id} выйграл ставка: {player.bet} прибавка: {player.bet * 1.5}"
+        )
         new_result = game_dto.PlayerResult(
             player_id=player_id,
             new_state=game_entities.player_status.DRAW,

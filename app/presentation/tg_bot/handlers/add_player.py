@@ -13,7 +13,7 @@ from app.infrastructure.tg_api.states import (
     GameStateData,
     PlayerState,
     PlayerStateKey,
-    PlayerStateData
+    PlayerStateData,
 )
 from app.infrastructure.tg_api.filters import (
     GameStateFilter,

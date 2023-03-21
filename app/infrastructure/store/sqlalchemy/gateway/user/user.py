@@ -32,8 +32,6 @@ class UserGatewayImpl(BaseGateway, UserGateway):
             update(entities.User)
             .where(entities.User.id == user.id)
             .values(
-                tg_id=user.tg_id,
-                username=user.username,
-                balance=user.balance
+                tg_id=user.tg_id, username=user.username, balance=user.balance
             )
         )
