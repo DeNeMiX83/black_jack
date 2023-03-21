@@ -191,12 +191,12 @@ async def timer_waiting_moves(update: Update, bot: TgBot):
                 + f"Ваш счет: {player.score}",
                 reply_markup=json.dumps(inline_keyboard),
             )
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
 
             player_state_data = await player_states_storage.get_state(
                 PlayerStateKey(chat_id=chat_id, user_id=player.user.tg_id)
             )
-            
+
             if player_state_data.state == PlayerState.MOTION:
                 await bot.send_message(
                     chat_id=chat_id,
