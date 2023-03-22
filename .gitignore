@@ -155,3 +155,5 @@ cython_debug/
 /.vscode
 my_log_file.log
 /deploy/.env**
+!/deploy/.env.prod.example
+!/deploy/.env.dev.example
